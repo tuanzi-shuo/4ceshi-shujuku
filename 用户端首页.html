@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>元生智护系统 - 首页</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft Yahei', sans-serif;
+            color: #34495e;
+        }
+
+        body {
+            background-color: #f0f8ff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* 导航栏样式 */
+        .navbar {
+            background-color: #ffffff;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            color: #2c3e50;
+            font-size: 1.8rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .navbar-brand:hover {
+            color: #3498db;
+            transform: scale(1.05);
+        }
+
+        /* 优化后的导航链接 */
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+            align-items: center;
+        }
+        .nav-link {
+            color: #666;
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+        .nav-link.active,
+        .nav-link:hover {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+        }
+
+        /* 主内容区样式 */
+        .main-content {
+            flex: 1;
+            padding: 3rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .section-title {
+            color: #2c3e50;
+            font-size: 2.2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            position: relative;
+            padding-bottom: 1.5rem;
+        }
+        .section-title::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: #3498db;
+        }
+
+        .health-knowledge {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        .knowledge-card {
+            background: #f9fafb;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .knowledge-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+            background: white;
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            background: #3498db;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            color: #2c3e50;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .card-content {
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+        }
+
+        .read-more {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            padding-right: 1.5rem;
+        }
+        .read-more::after {
+            content: '>';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+        .read-more:hover::after {
+            transform: translateX(5px);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+                flex-wrap: wrap;
+            }
+            .nav-links {
+                flex-direction: column;
+                gap: 1.5rem;
+                margin-top: 1rem;
+            }
+            .section-title {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+	<nav class="navbar">
+		<div class="navbar-brand">
+			<span>用户端</span> | 元生智护系统
+		</div>
+		<ul class="nav-links">
+			<li><a href="用户端首页.html" class="nav-link active">首页</a></li>
+			<li><a href="用户端元生产品.html" class="nav-link">元生产品</a></li>
+			<li><a href="用户端附近医疗机构.html" class="nav-link">附近医疗机构</a></li>
+			<li><a href="用户端社区支持.html" class="nav-link">社区支持</a></li>
+			<li><a href="用户端个人账户.html" class="nav-link">个人账户</a></li>
+		</ul>
+    </nav>
+
+    <!-- 主内容区 -->
+    <div class="main-content">
+        <section class="section-title">今日健康小知识</section>
+        
+        <!-- 知识卡片将通过JavaScript动态生成 -->
+        <div class="health-knowledge" id="knowledgeContainer">
+            <!-- 动态内容将在此处渲染 -->
+        </div>
+    </div>
+
+    <!-- 底部版权 -->
+    <footer style="text-align:center; padding:1rem; background:#eee; margin-top:auto;">
+        <p>© 2026 元生智护系统 版权所有 | 健康资讯由北京协和医院、上海瑞金医院联合提供</p>
+    </footer>
+
+    <script>
+        // 模拟从医护端获取的健康知识数据
+        // 此数据来源于【医护端首页.html】中的 knowledgeData 数组
+        // 在实际应用中，这里应通过API接口获取
+        const knowledgeData = [
+            {
+                id: 1,
+                title: "高血压患者的日常管理指南",
+                excerpt: "高血压是常见的慢性疾病，对患者的生活质量有显著影响。本文详细介绍了高血压患者在日常生活中的注意事项，包括饮食控制、适度运动、规律服药、定期监测等方面。",
+                category: "chronic",
+                categoryName: "慢性病管理",
+                author: "王志强",
+                authorDept: "心血管内科",
+                postTime: "2026-04-08 14:30",
+                readCount: 156,
+                commentCount: 8
+            },
+            {
+                id: 2,
+                title: "儿童呼吸道感染预防策略",
+                excerpt: "春季是儿童呼吸道感染的高发期，本文从环境、饮食、生活习惯等多方面提供预防建议，帮助家长保护儿童健康。",
+                category: "pediatrics",
+                categoryName: "儿科",
+                author: "李雪梅",
+                authorDept: "儿科",
+                postTime: "2026-04-07 10:15",
+                readCount: 203,
+                commentCount: 12
+            },
+            {
+                id: 3,
+                title: "糖尿病患者的饮食管理",
+                excerpt: "科学饮食是糖尿病管理的基础，本文详细介绍了糖尿病患者如何合理搭配三餐，控制血糖波动。",
+                category: "chronic",
+                categoryName: "慢性病管理",
+                author: "刘建国",
+                authorDept: "内分泌科",
+                postTime: "2026-04-06 16:45",
+                readCount: 189,
+                commentCount: 6
+            },
+            {
+                id: 4,
+                title: "急性阑尾炎的早期识别与处理",
+                excerpt: "急性阑尾炎是常见的急腹症，早期识别对预后至关重要。本文介绍了典型症状、诊断要点和处理原则。",
+                category: "surgery",
+                categoryName: "外科",
+                author: "陈建国",
+                authorDept: "普外科",
+                postTime: "2026-04-05 09:20",
+                readCount: 124,
+                commentCount: 5
+            },
+            {
+                id: 5,
+                title: "老年人骨质疏松的预防与治疗",
+                excerpt: "随着年龄增长，骨质疏松风险增加，本文从补钙、运动、药物等方面介绍预防和治疗策略。",
+                category: "internal",
+                categoryName: "内科",
+                author: "赵明华",
+                authorDept: "老年病科",
+                postTime: "2026-04-04 13:10",
+                readCount: 178,
+                commentCount: 7
+            },
+            {
+                id: 6,
+                title: "孕期营养与健康管理",
+                excerpt: "孕期营养对母婴健康至关重要。本文根据不同孕期阶段，提供科学的营养建议和健康管理方案。",
+                category: "internal",
+                categoryName: "内科",
+                author: "孙晓丽",
+                authorDept: "妇产科",
+                postTime: "2026-04-03 15:40",
+                readCount: 231,
+                commentCount: 15
+            },
+            {
+                id: 7,
+                title: "老年患者压疮的预防与护理",
+                excerpt: "压疮是长期卧床老年患者的常见并发症，严重影响患者生活质量和康复进程。本文介绍了压疮的分期、预防措施和护理要点。",
+                category: "chronic",
+                categoryName: "慢性病管理",
+                author: "王美玲",
+                authorDept: "老年科护理部",
+                postTime: "2026-04-02 09:15",
+                readCount: 98,
+                commentCount: 4
+            },
+            {
+                id: 8,
+                title: "婴幼儿疫苗接种后的护理要点",
+                excerpt: "疫苗接种是预防传染病的重要手段，但接种后的护理同样重要。本文介绍了婴幼儿疫苗接种后的常见反应及护理措施。",
+                category: "pediatrics",
+                categoryName: "儿科",
+                author: "刘秀英",
+                authorDept: "儿科护理部",
+                postTime: "2026-04-01 14:20",
+                readCount: 145,
+                commentCount: 6
+            },
+            {
+                id: 9,
+                title: "糖尿病足患者的日常护理指导",
+                excerpt: "糖尿病足是糖尿病的严重并发症，正确的日常护理可以显著降低截肢风险。本文介绍了糖尿病足患者的护理要点和注意事项。",
+                category: "chronic",
+                categoryName: "慢性病管理",
+                author: "陈美华",
+                authorDept: "内分泌科护理部",
+                postTime: "2026-03-31 11:30",
+                readCount: 112,
+                commentCount: 3
+            },
+            {
+                id: 10,
+                title: "产后恢复与盆底肌锻炼指导",
+                excerpt: "产后恢复是产妇身心健康的重要环节，盆底肌锻炼有助于预防尿失禁等并发症。本文介绍了产后恢复的注意事项和盆底肌锻炼方法。",
+                category: "internal",
+                categoryName: "内科",
+                author: "周秀娟",
+                authorDept: "妇产科护理部",
+                postTime: "2026-03-30 16:45",
+                readCount: 167,
+                commentCount: 8
+            }
+        ];
+
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            renderKnowledgeCards();
+        });
+
+        // 渲染知识卡片
+        function renderKnowledgeCards() {
+            const container = document.getElementById('knowledgeContainer');
+            container.innerHTML = '';
+
+            // 按发布时间降序排序，获取最新的3篇文章
+            const sortedData = [...knowledgeData].sort((a, b) => 
+                new Date(b.postTime) - new Date(a.postTime)
+            ).slice(0, 3);
+
+            // 为每篇文章定义对应的图标
+            const categoryIcons = {
+                'chronic': '💊',
+                'pediatrics': '👶',
+                'surgery': '🩺',
+                'internal': '🧠',
+                'other': '📄'
+            };
+
+            sortedData.forEach(article => {
+                const card = document.createElement('div');
+                card.className = 'knowledge-card';
+                
+                // 使用分类获取对应图标，默认可选一个通用图标
+                const icon = categoryIcons[article.category] || '📄';
+                
+                card.innerHTML = `
+                    <div class="card-icon">${icon}</div>
+                    <h2 class="card-title">${article.title}</h2>
+                    <p class="card-content">${article.excerpt}</p>
+                    <div style="color: #888; font-size: 0.9rem; margin-bottom: 1rem;">
+                        作者：${article.author} | ${article.authorDept} | ${article.postTime}
+                    </div>
+                    <a href="#" class="read-more" onclick="viewArticleDetail(${article.id})">查看完整内容</a>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        // 查看文章详情（模拟功能）
+        function viewArticleDetail(articleId) {
+            const article = knowledgeData.find(item => item.id === articleId);
+            if (article) {
+                alert(`即将查看文章详情：\n\n《${article.title}》\n\n作者：${article.author}\n科室：${article.authorDept}\n发布时间：${article.postTime}\n\n（在实际系统中，这里会跳转到文章详情页）`);
+                // 在实际应用中，这里应该跳转到文章详情页面或打开模态框
+                // window.location.href = `文章详情页.html?id=${articleId}`;
+            }
+            return false; // 阻止链接默认行为
+        }
+    </script>
+</body>
+</html>

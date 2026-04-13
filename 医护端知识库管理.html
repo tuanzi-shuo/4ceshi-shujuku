@@ -1,0 +1,1838 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>元生智护系统 - 知识库管理</title>
+    <style>
+        /* 全局样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', 'Segoe UI', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f8fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        /* 导航栏样式 */
+        .navbar {
+            background: linear-gradient(135deg, #1a6dcc 0%, #0d4d9e 100%);
+            color: white;
+            padding: 0 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            height: 70px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            border-radius: 50%;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1a6dcc;
+            font-weight: bold;
+        }
+        
+        .nav-menu {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-item {
+            margin: 0 15px;
+        }
+        
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            color: #1a6dcc;
+            font-weight: bold;
+        }
+        
+        /* 主内容区样式 */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* 页面标题区域 - 按照图片样式 */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        
+        .page-title {
+            color: #1a6dcc;
+            font-size: 2.2rem;
+            font-weight: bold;
+            text-align: center;
+            width: 100%;
+            margin: 20px 0;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #1a6dcc 0%, #0d4d9e 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(26, 109, 204, 0.3);
+        }
+        
+        /* 知识库管理区域 */
+        .knowledge-management {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 25px;
+        }
+        
+        /* 左侧功能面板 */
+        .sidebar {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            height: fit-content;
+        }
+        
+        .sidebar-section {
+            margin-bottom: 25px;
+        }
+        
+        .sidebar-title {
+            color: #1a6dcc;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .category-list {
+            list-style: none;
+        }
+        
+        .category-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            margin-bottom: 5px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .category-item:hover, .category-item.active {
+            background-color: #f0f7ff;
+        }
+        
+        .category-count {
+            background-color: #e6f2ff;
+            color: #1a6dcc;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+        }
+        
+        .status-list {
+            list-style: none;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            margin-bottom: 5px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .status-item:hover, .status-item.active {
+            background-color: #f0f7ff;
+        }
+        
+        .status-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        
+        .status-draft { background-color: #ffa726; }
+        .status-published { background-color: #4caf50; }
+        .status-review { background-color: #2196f3; }
+        
+        /* 状态数量角标 */
+        .badge {
+            background-color: #e6f2ff;
+            color: #1a6dcc;
+            border-radius: 10px;
+            padding: 2px 8px;
+            font-size: 0.75rem;
+            min-width: 20px;
+            text-align: center;
+        }
+        
+        /* 右侧内容区域 */
+        .content-main {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        /* 搜索和筛选栏 */
+        .search-bar {
+            display: flex;
+            gap: 15px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+        
+        .search-btn {
+            background-color: #1a6dcc;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        
+        /* 知识文章列表 */
+        .knowledge-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .knowledge-item {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .knowledge-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        
+        .item-title {
+            font-size: 1.2rem;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .item-meta {
+            display: flex;
+            gap: 15px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .item-status {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .status-draft-bg { background-color: #fff3e0; color: #ef6c00; }
+        .status-published-bg { background-color: #e8f5e9; color: #2e7d32; }
+        .status-review-bg { background-color: #e3f2fd; color: #1565c0; }
+        
+        .item-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-icon {
+            background: none;
+            border: 1px solid #ddd;
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        
+        .btn-edit:hover {
+            background-color: #e3f2fd;
+            border-color: #2196f3;
+            color: #2196f3;
+        }
+        
+        .btn-delete {
+            background: none;
+            border: 1px solid #ddd;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            color: #666;
+            transition: all 0.3s;
+        }
+        
+        .btn-delete:hover {
+            background-color: #ffebee;
+            border-color: #f44336;
+            color: #f44336;
+        }
+        
+        .item-excerpt {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .item-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid #f0f0f0;
+        }
+        
+        .item-stats {
+            display: flex;
+            gap: 20px;
+            color: #888;
+            font-size: 0.9rem;
+        }
+        
+        /* 模态框样式 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        
+        .modal {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            color: #1a6dcc;
+            font-size: 1.5rem;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        /* 预览模态框样式 */
+        .preview-modal {
+            max-width: 800px;
+        }
+        
+        .preview-content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            max-height: 500px;
+            overflow-y: auto;
+            margin-top: 15px;
+            line-height: 1.8;
+        }
+        
+        .preview-title {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .preview-meta {
+            display: flex;
+            gap: 20px;
+            color: #666;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        /* 确认对话框样式 */
+        .confirm-dialog {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+        
+        .confirm-title {
+            color: #333;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+        
+        .confirm-message {
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+        
+        .confirm-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .btn-cancel {
+            background-color: #f5f5f5;
+            color: #333;
+            border: 1px solid #ddd;
+            padding: 10px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        
+        .btn-confirm {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        
+        /* 提示弹窗样式 */
+        .alert-dialog {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+        
+        .alert-title {
+            color: #1a6dcc;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+        
+        .alert-message {
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+        
+        .alert-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .btn-ok {
+            background: linear-gradient(135deg, #1a6dcc 0%, #0d4d9e 100%);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            min-width: 100px;
+        }
+        
+        .btn-cancel-style {
+            background-color: #f5f5f5;
+            color: #333;
+            border: 1px solid #ddd;
+            padding: 10px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            min-width: 100px;
+        }
+        
+        /* 表单样式 */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+        
+        .form-textarea {
+            min-height: 200px;
+            resize: vertical;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .btn-secondary {
+            background-color: #f5f5f5;
+            color: #333;
+            border: 1px solid #ddd;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        
+        /* 按钮状态样式 */
+        .save-draft-btn {
+            background: linear-gradient(135deg, #1a6dcc 0%, #0d4d9e 100%);
+            color: white;
+            border: none;
+        }
+        
+        .save-draft-btn:hover {
+            background: linear-gradient(135deg, #0d4d9e 0%, #0a3a7a 100%);
+        }
+        
+        .publish-btn {
+            background: linear-gradient(135deg, #1a6dcc 0%, #0d4d9e 100%);
+            color: white;
+            border: none;
+        }
+        
+        .publish-btn:hover {
+            background: linear-gradient(135deg, #0d4d9e 0%, #0a3a7a 100%);
+        }
+        
+        /* 按钮提示文本样式 */
+        .btn-tip {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 5px;
+            text-align: center;
+        }
+        
+        /* 分页样式 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .page-btn {
+            background: white;
+            border: 1px solid #ddd;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .page-btn.active {
+            background-color: #1a6dcc;
+            color: white;
+            border-color: #1a6dcc;
+        }
+        
+        .page-btn:disabled {
+            background-color: #f5f5f5;
+            color: #999;
+            cursor: not-allowed;
+        }
+        
+        /* 页脚样式 */
+        .footer {
+            background-color: #1a3a5f;
+            color: white;
+            padding: 30px 20px;
+            margin-top: 40px;
+        }
+        
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 20px;
+        }
+        
+        .footer-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: #a6c8ff;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 8px;
+        }
+        
+        .footer-links a {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #2a4a6f;
+            color: #a6c8ff;
+            font-size: 0.9rem;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1024px) {
+            .knowledge-management {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                order: 2;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                height: auto;
+                padding: 15px 0;
+            }
+            
+            .nav-menu {
+                margin-top: 15px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .nav-item {
+                margin: 5px 10px;
+            }
+            
+            .user-info {
+                margin-top: 15px;
+            }
+            
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .search-bar {
+                flex-direction: column;
+            }
+            
+            .item-header {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .item-actions {
+                align-self: flex-start;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .confirm-actions {
+                flex-direction: column;
+            }
+            
+            .alert-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-icon">元</div>
+                <span>元生智护系统（医护端）</span>
+            </div>
+            
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="医护端首页.html" class="nav-link">首页</a></li>
+                <li class="nav-item"><a href="医护端咨询管理.html" class="nav-link">咨询管理</a></li>
+                <li class="nav-item"><a href="医护端知识库管理.html" class="nav-link active">知识库管理</a></li>
+                <li class="nav-item"><a href="医护端档案管理.html" class="nav-link">档案管理</a></li>
+                <li class="nav-item"><a href="医护端个人中心.html" class="nav-link">个人中心</a></li>
+            </ul>
+            
+            <div class="user-info">
+                <div class="user-avatar">张</div>
+                <div>
+                    <div>张文华医生</div>
+                    <div style="font-size: 0.8rem;">心内科 | 主任医师</div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <div class="main-container">        
+        <!-- 知识库管理区域 -->
+        <div class="knowledge-management">
+            <!-- 左侧功能面板 -->
+            <div class="sidebar">
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">文章分类</h3>
+                    <ul class="category-list">
+                        <li class="category-item active" onclick="filterByCategory('all')">
+                            <span>全部文章</span>
+                            <span class="category-count" id="count-all">0</span>
+                        </li>
+                        <li class="category-item" onclick="filterByCategory('internal')">
+                            <span>内科</span>
+                            <span class="category-count" id="count-internal">0</span>
+                        </li>
+                        <li class="category-item" onclick="filterByCategory('surgery')">
+                            <span>外科</span>
+                            <span class="category-count" id="count-surgery">0</span>
+                        </li>
+                        <li class="category-item" onclick="filterByCategory('pediatrics')">
+                            <span>儿科</span>
+                            <span class="category-count" id="count-pediatrics">0</span>
+                        </li>
+                        <li class="category-item" onclick="filterByCategory('chronic')">
+                            <span>慢性病管理</span>
+                            <span class="category-count" id="count-chronic">0</span>
+                        </li>
+                        <li class="category-item" onclick="filterByCategory('other')">
+                            <span>其他</span>
+                            <span class="category-count" id="count-other">0</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">文章状态</h3>
+                    <ul class="status-list">
+                        <li class="status-item active" onclick="filterByStatus('all')">
+                            <div class="status-info">
+                                <div class="status-dot" style="background-color: #1a6dcc;"></div>
+                                <span>全部状态</span>
+                            </div>
+                            <span class="badge" id="count-status-all">0</span>
+                        </li>
+                        <li class="status-item" onclick="filterByStatus('draft')">
+                            <div class="status-info">
+                                <div class="status-dot status-draft"></div>
+                                <span>草稿</span>
+                            </div>
+                            <span class="badge" id="count-status-draft">0</span>
+                        </li>
+                        <li class="status-item" onclick="filterByStatus('published')">
+                            <div class="status-info">
+                                <div class="status-dot status-published"></div>
+                                <span>已发布</span>
+                            </div>
+                            <span class="badge" id="count-status-published">0</span>
+                        </li>
+                        <li class="status-item" onclick="filterByStatus('review')">
+                            <div class="status-info">
+                                <div class="status-dot status-review"></div>
+                                <span>待审核</span>
+                            </div>
+                            <span class="badge" id="count-status-review">0</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="btn-primary" onclick="showCreateModal()" style="width: 100%;">
+                        <span>+</span> 新建知识文章
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 右侧主要内容 -->
+            <div class="content-main">
+                <!-- 搜索栏 -->
+                <div class="search-bar">
+                    <input type="text" class="search-input" placeholder="搜索文章标题或内容..." id="searchInput" onkeyup="searchArticles()">
+                    <button class="search-btn" onclick="searchArticles()">搜索</button>
+                </div>
+                
+                <!-- 知识文章列表 -->
+                <div class="knowledge-list" id="knowledgeList">
+                    <!-- 文章将通过JavaScript动态生成 -->
+                </div>
+                
+                <!-- 分页 -->
+                <div class="pagination" id="pagination">
+                    <!-- 分页按钮将通过JavaScript动态生成 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新建/编辑文章模态框 -->
+    <div class="modal-overlay" id="createModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">新建健康知识文章</h2>
+                <button class="modal-close" onclick="closeCreateModal()">&times;</button>
+            </div>
+            <form id="articleForm" onsubmit="return false;">
+                <div class="form-group">
+                    <label class="form-label">文章标题</label>
+                    <input type="text" class="form-input" id="articleTitle" placeholder="请输入文章标题" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">文章分类</label>
+                    <select class="form-select" id="articleCategory" required>
+                        <option value="">请选择分类</option>
+                        <option value="internal">内科</option>
+                        <option value="surgery">外科</option>
+                        <option value="pediatrics">儿科</option>
+                        <option value="chronic">慢性病管理</option>
+                        <option value="other">其他</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">文章内容</label>
+                    <textarea class="form-textarea" id="articleContent" placeholder="请输入文章内容..." rows="8" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">关键词（用逗号分隔）</label>
+                    <input type="text" class="form-input" id="articleKeywords" placeholder="例如：高血压,饮食,运动">
+                </div>
+                
+                <div class="form-actions">
+                    <div style="flex: 1;">
+                        <button type="button" class="btn-secondary" onclick="closeCreateModal()" style="width: 100%;">取消</button>
+                    </div>
+                    <div style="flex: 1; text-align: center;">
+                        <button type="button" class="btn-primary save-draft-btn" onclick="saveArticleAsDraft()" style="width: 100%; padding: 12px 20px;">保存文章</button>
+                        <div class="btn-tip">文章将保存为草稿</div>
+                    </div>
+                    <div style="flex: 1; text-align: center;">
+                        <button type="button" class="btn-primary publish-btn" onclick="showPublishConfirm()" style="width: 100%; padding: 12px 20px;">发布</button>
+                        <div class="btn-tip">文章将提交审核（待审核状态）</div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- 预览模态框 -->
+    <div class="modal-overlay" id="previewModal">
+        <div class="modal preview-modal">
+            <div class="modal-header">
+                <h2 class="modal-title" id="previewModalTitle">文章预览</h2>
+                <button class="modal-close" onclick="closePreviewModal()">&times;</button>
+            </div>
+            <div id="previewContent">
+                <!-- 预览内容将通过JavaScript动态生成 -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- 确认删除对话框 -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="confirm-dialog">
+            <h3 class="confirm-title">确认删除</h3>
+            <p class="confirm-message" id="confirmMessage">您确定要删除这篇文章吗？此操作不可恢复。</p>
+            <div class="confirm-actions">
+                <button class="btn-cancel" onclick="closeConfirmModal()">取消</button>
+                <button class="btn-confirm" onclick="confirmDelete()">确认删除</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 发布确认弹窗 -->
+    <div class="modal-overlay" id="publishConfirmModal">
+        <div class="confirm-dialog">
+            <h3 class="confirm-title">确认发布</h3>
+            <p class="confirm-message">点击"确定"将保存并提交文章为待审核状态，点击"取消"将返回编辑。<br><br>确认要保存并发布吗？</p>
+            <div class="confirm-actions">
+                <button class="btn-cancel" onclick="closePublishConfirmModal()">取消</button>
+                <button class="btn-confirm" onclick="publishArticle()">确定</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 提示弹窗 -->
+    <div class="modal-overlay" id="alertModal">
+        <div class="alert-dialog">
+            <h3 class="alert-title" id="alertTitle">提示</h3>
+            <p class="alert-message" id="alertMessage">提示信息</p>
+            <div class="alert-actions">
+                <button class="btn-ok" onclick="closeAlertModal()">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3 class="footer-title">关于我们</h3>
+                <p>元生智护系统致力于为医护人员提供专业的医疗咨询和健康知识管理平台，提升医疗服务质量。</p>
+            </div>
+            <div class="footer-section">
+                <h3 class="footer-title">快速链接</h3>
+                <ul class="footer-links">
+                    <li><a href="user_guide.html">使用指南</a></li>
+                    <li><a href="faq.html">常见问题</a></li>
+                    <li><a href="announcement.html">系统公告</a></li>
+                    <li><a href="privacy.html">隐私政策</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3 class="footer-title">联系我们</h3>
+                <ul class="footer-links">
+                    <li>技术支持: support@yuansheng.com</li>
+                    <li>客服电话: 400-123-4567</li>
+                    <li>工作时间: 工作日 9:00-18:00</li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>© 2026 元生智护系统 医护端. 版权所有.</p>
+        </div>
+    </footer>
+
+    <script>
+        // 模拟知识库文章数据
+        let knowledgeArticles = [
+            {
+                id: 1,
+                title: "高血压患者的日常管理指南",
+                excerpt: "高血压是常见慢性病，本文详细介绍了高血压患者在日常生活中的注意事项，包括饮食、运动、药物管理等方面。",
+                content: "# 高血压患者的日常管理指南\n\n高血压是常见慢性病，本文详细介绍了高血压患者在日常生活中的注意事项，包括饮食、运动、药物管理等方面。\n\n## 饮食管理\n1. 低盐饮食：每日食盐摄入量控制在6克以下\n2. 控制脂肪摄入：减少饱和脂肪酸和反式脂肪酸的摄入\n3. 增加蔬菜水果：富含钾、镁、钙等微量元素\n4. 限制饮酒：建议男性每日酒精量不超过25克，女性不超过15克\n\n## 运动建议\n1. 有氧运动：每周至少150分钟中等强度有氧运动\n2. 力量训练：每周2-3次，每次8-10个动作\n3. 柔韧性练习：每周2-3次，每次10-15分钟\n\n## 药物管理\n1. 按时服药：严格按照医嘱服药\n2. 定期监测：每天早晚各测一次血压\n3. 定期复诊：至少每3个月复诊一次\n\n## 生活建议\n1. 戒烟限酒\n2. 控制体重\n3. 保持良好心态\n4. 充足睡眠",
+                category: "chronic",
+                categoryName: "慢性病管理",
+                status: "published",
+                statusText: "已发布",
+                author: "张文华医生",
+                authorDept: "心内科",
+                createTime: "2026-04-08 14:30",
+                updateTime: "2026-04-08 14:30",
+                readCount: 156,
+                likeCount: 42,
+                keywords: ["高血压", "慢性病", "日常管理"]
+            },
+            {
+                id: 2,
+                title: "儿童呼吸道感染预防策略",
+                excerpt: "春季是儿童呼吸道感染高发期，本文从环境、饮食、生活习惯等多方面提供预防建议，帮助家长保护儿童健康。",
+                content: "# 儿童呼吸道感染预防策略\n\n春季是儿童呼吸道感染高发期，本文从环境、饮食、生活习惯等多方面提供预防建议，帮助家长保护儿童健康。\n\n## 环境因素\n1. 保持室内通风：每天开窗通风2-3次，每次15-30分钟\n2. 适宜温湿度：室内温度保持在20-24℃，湿度在50%-60%\n3. 避免去人群密集场所\n4. 定期消毒：对儿童常接触的物品进行定期消毒\n\n## 饮食建议\n1. 均衡营养：保证蛋白质、维生素、矿物质的摄入\n2. 多喝水：保持呼吸道湿润\n3. 适量补充维生素C\n4. 避免生冷食物\n\n## 生活习惯\n1. 勤洗手：饭前便后、外出回家后要洗手\n2. 充足睡眠：保证每天8-10小时睡眠\n3. 适度锻炼：每天户外活动1-2小时\n4. 穿着适宜：根据天气变化及时增减衣物",
+                category: "pediatrics",
+                categoryName: "儿科",
+                status: "published",
+                statusText: "已发布",
+                author: "张文华医生",
+                authorDept: "心内科",
+                createTime: "2026-04-07 10:15",
+                updateTime: "2026-04-07 10:15",
+                readCount: 203,
+                likeCount: 67,
+                keywords: ["儿童", "呼吸道感染", "预防"]
+            },
+            {
+                id: 3,
+                title: "糖尿病患者的饮食管理",
+                excerpt: "科学饮食是糖尿病管理的基础，本文详细介绍了糖尿病患者如何合理搭配三餐，控制血糖波动。",
+                content: "# 糖尿病患者的饮食管理\n\n科学饮食是糖尿病管理的基础，本文详细介绍了糖尿病患者如何合理搭配三餐，控制血糖波动。\n\n## 饮食原则\n1. 控制总热量摄入\n2. 均衡营养，合理搭配\n3. 定时定量，少食多餐\n4. 限制高糖高脂食物\n\n## 食物选择\n1. 主食：选择全谷物、杂豆类\n2. 蛋白质：适量摄入鱼、禽、蛋、瘦肉\n3. 蔬菜：多吃绿叶蔬菜\n4. 水果：选择低糖水果，控制分量\n\n## 进餐建议\n1. 定时进餐\n2. 控制每餐分量\n3. 细嚼慢咽\n4. 避免夜宵",
+                category: "chronic",
+                categoryName: "慢性病管理",
+                status: "review",
+                statusText: "待审核",
+                author: "张文华医生",
+                authorDept: "心内科",
+                createTime: "2026-04-06 16:45",
+                updateTime: "2026-04-06 16:45",
+                readCount: 189,
+                likeCount: 51,
+                keywords: ["糖尿病", "饮食", "血糖控制"]
+            },
+            {
+                id: 4,
+                title: "急性阑尾炎的早期识别与处理",
+                excerpt: "急性阑尾炎是常见急腹症，早期识别对预后至关重要。本文介绍了典型症状、诊断要点和处理原则。",
+                content: "# 急性阑尾炎的早期识别与处理\n\n急性阑尾炎是常见急腹症，早期识别对预后至关重要。本文介绍了典型症状、诊断要点和处理原则。\n\n## 症状识别\n1. 转移性右下腹痛\n2. 恶心、呕吐等消化道症状\n3. 发热、白细胞升高\n4. 麦氏点压痛\n\n## 诊断要点\n1. 病史询问\n2. 体格检查\n3. 实验室检查\n4. 影像学检查\n\n## 处理原则\n1. 及时就医，避免延误\n2. 明确诊断\n3. 手术治疗\n4. 术后护理",
+                category: "surgery",
+                categoryName: "外科",
+                status: "published",
+                statusText: "已发布",
+                author: "张文华医生",
+                authorDept: "心内科",
+                createTime: "2026-04-05 09:20",
+                updateTime: "2026-04-05 09:20",
+                readCount: 124,
+                likeCount: 38,
+                keywords: ["阑尾炎", "急腹症", "外科"]
+            },
+            {
+                id: 5,
+                title: "老年人骨质疏松的预防与治疗",
+                excerpt: "随着年龄增长，骨质疏松风险增加。本文从补钙、运动、药物等方面介绍预防和治疗策略。",
+                content: "# 老年人骨质疏松的预防与治疗\n\n随着年龄增长，骨质疏松风险增加。本文从补钙、运动、药物等方面介绍预防和治疗策略。\n\n## 预防措施\n1. 补充钙质和维生素D\n2. 适度负重运动\n3. 避免跌倒风险\n4. 健康生活方式\n\n## 治疗方法\n1. 药物治疗\n2. 物理治疗\n3. 手术治疗\n4. 康复训练\n\n## 注意事项\n1. 定期检查骨密度\n2. 遵医嘱用药\n3. 注意安全，防止跌倒\n4. 合理饮食",
+                category: "internal",
+                categoryName: "内科",
+                status: "draft",
+                statusText: "草稿",
+                author: "张文华医生",
+                authorDept: "心内科",
+                createTime: "2026-04-04 11:30",
+                updateTime: "2026-04-04 11:30",
+                readCount: 0,
+                likeCount: 0,
+                keywords: ["骨质疏松", "老年人", "补钙"]
+            },
+            {
+                id: 6,
+                title: "冠心病患者的康复指导",
+                excerpt: "冠心病患者康复期需要注意的事项，包括药物管理、生活方式调整、心理疏导等方面。",
+                content: "# 冠心病患者的康复指导\n\n冠心病患者康复期需要注意的事项，包括药物管理、生活方式调整、心理疏导等方面。\n\n## 药物管理\n1. 按时服用抗血小板药物\n2. 控制血压和血脂药物\n3. 定期监测肝肾功能\n4. 注意药物相互作用\n\n## 生活方式调整\n1. 低盐低脂饮食\n2. 戒烟限酒\n3. 适量有氧运动\n4. 控制体重\n\n## 心理疏导\n1. 保持乐观心态\n2. 避免情绪激动\n3. 参加支持团体\n4. 定期心理咨询",
+                category: "internal",
+                categoryName: "内科",
+                status: "published",
+                statusText: "已发布",
+                author: "张文华医生",
+                authorDept: "心内科",
+                createTime: "2026-04-03 15:20",
+                updateTime: "2026-04-03 15:20",
+                readCount: 178,
+                likeCount: 45,
+                keywords: ["冠心病", "康复", "心血管"]
+            },
+            {
+                id: 7,
+                title: "骨折急救与初步处理",
+                excerpt: "骨折的现场急救措施和初步处理方法，包括固定、止血、转运等关键步骤。",
+                content: "# 骨折急救与初步处理\n\n骨折的现场急救措施和初步处理方法，包括固定、止血、转运等关键步骤。\n\n## 现场急救\n1. 评估现场安全\n2. 检查伤员意识\n3. 控制出血\n4. 固定骨折部位\n\n## 固定方法\n1. 使用夹板或硬物固定\n2. 固定范围应包括上下关节\n3. 避免过度移动\n4. 注意松紧适度\n\n## 转运注意事项\n1. 保持平稳搬运\n2. 避免二次损伤\n3. 及时送往医院\n4. 记录受伤情况",
+                category: "surgery",
+                categoryName: "外科",
+                status: "published",
+                statusText: "已发布",
+                author: "张文华医生",
+                authorDept: "心内科",
+                createTime: "2026-04-02 10:45",
+                updateTime: "2026-04-02 10:45",
+                readCount: 145,
+                likeCount: 39,
+                keywords: ["骨折", "急救", "骨科"]
+            },
+            {
+                id: 8,
+                title: "孕期营养与保健",
+                excerpt: "孕期营养需求和保健知识，包括孕期饮食、运动、检查等全方位的指导。",
+                content: "# 孕期营养与保健\n\n孕期营养需求和保健知识，包括孕期饮食、运动、检查等全方位的指导。\n\n## 营养需求\n1. 补充叶酸\n2. 增加蛋白质摄入\n3. 补充铁和钙\n4. 适量补充DHA\n\n## 孕期保健\n1. 定期产检\n2. 适当运动\n3. 充足休息\n4. 心理调适\n\n## 注意事项\n1. 避免接触有害物质\n2. 慎用药物\n3. 注意个人卫生\n4. 及时就医信号",
+                category: "other",
+                categoryName: "其他",
+                status: "published",
+                statusText: "已发布",
+                author: "张文华医生",
+                authorDept: "心内科",
+                createTime: "2026-04-01 13:20",
+                updateTime: "2026-04-01 13:20",
+                readCount: 267,
+                likeCount: 78,
+                keywords: ["孕期", "营养", "保健"]
+            },
+            {
+                id: 9,
+                title: "消化性溃疡的诊疗指南",
+                excerpt: "消化性溃疡的病因、诊断和治疗方法，包括药物治疗、饮食调整和生活方式干预。",
+                content: "# 消化性溃疡的诊疗指南\n\n消化性溃疡的病因、诊断和治疗方法，包括药物治疗、饮食调整和生活方式干预。\n\n## 病因分析\n1. 幽门螺杆菌感染\n2. 长期使用非甾体抗炎药\n3. 胃酸分泌过多\n4. 应激因素\n\n## 诊断方法\n1. 胃镜检查\n2. 幽门螺杆菌检测\n3. 影像学检查\n4. 临床表现评估\n\n## 治疗方案\n1. 根除幽门螺杆菌\n2. 抑制胃酸分泌\n3. 保护胃黏膜\n4. 生活方式调整",
+                category: "internal",
+                categoryName: "内科",
+                status: "review",
+                statusText: "待审核",
+                author: "张文华医生",
+                authorDept: "心内科",
+                createTime: "2026-03-31 16:30",
+                updateTime: "2026-03-31 16:30",
+                readCount: 98,
+                likeCount: 23,
+                keywords: ["消化性溃疡", "胃病", "诊疗"]
+            },
+            {
+                id: 10,
+                title: "皮肤湿疹的护理方法",
+                excerpt: "湿疹患者的日常护理和治疗指南，包括皮肤保湿、药物治疗和避免诱发因素。",
+                content: "# 皮肤湿疹的护理方法\n\n湿疹患者的日常护理和治疗指南，包括皮肤保湿、药物治疗和避免诱发因素。\n\n## 日常护理\n1. 保持皮肤湿润\n2. 使用温和清洁产品\n3. 避免搔抓\n4. 穿着宽松棉质衣物\n\n## 药物治疗\n1. 外用皮质类固醇\n2. 钙调神经磷酸酶抑制剂\n3. 抗组胺药物\n4. 抗生素治疗继发感染\n\n## 避免诱因\n1. 避免过敏原\n2. 控制环境湿度\n3. 减少精神压力\n4. 注意饮食调理",
+                category: "other",
+                categoryName: "其他",
+                status: "draft",
+                statusText: "草稿",
+                author: "张文华医生",
+                authorDept: "心内科",
+                createTime: "2026-03-30 11:15",
+                updateTime: "2026-03-30 11:15",
+                readCount: 0,
+                likeCount: 0,
+                keywords: ["湿疹", "皮肤病", "护理"]
+            },
+            {
+                id: 11,
+                title: "心肺复苏急救指南",
+                excerpt: "标准心肺复苏操作流程，适用于成人、儿童和婴儿的心肺复苏技术要点。",
+                content: "# 心肺复苏急救指南\n\n标准心肺复苏操作流程，适用于成人、儿童和婴儿的心肺复苏技术要点。\n\n## 操作流程\n1. 评估现场安全\n2. 检查患者反应\n3. 呼叫急救\n4. 检查呼吸\n5. 开始胸外按压\n6. 人工呼吸\n\n## 技术要点\n1. 按压深度5-6厘米\n2. 按压频率100-120次/分钟\n3. 按压与通气比例30:2\n4. 尽量减少按压中断\n\n## 注意事项\n1. 确保环境安全\n2. 尽快使用AED\n3. 持续复苏直到专业人员到达\n4. 注意自我保护",
+                category: "other",
+                categoryName: "其他",
+                status: "published",
+                statusText: "已发布",
+                author: "张文华医生",
+                authorDept: "心内科",
+                createTime: "2026-03-29 09:45",
+                updateTime: "2026-03-29 09:45",
+                readCount: 312,
+                likeCount: 89,
+                keywords: ["心肺复苏", "急救", "CPR"]
+            },
+            {
+                id: 12,
+                title: "脑卒中康复训练指导",
+                excerpt: "脑卒中患者的康复训练方法和注意事项，包括运动功能、语言功能和认知功能训练。",
+                content: "# 脑卒中康复训练指导\n\n脑卒中患者的康复训练方法和注意事项，包括运动功能、语言功能和认知功能训练。\n\n## 运动功能训练\n1. 床上体位摆放\n2. 被动关节活动\n3. 坐位平衡训练\n4. 站立和行走训练\n\n## 语言功能训练\n1. 口语表达训练\n2. 听力理解训练\n3. 阅读训练\n4. 书写训练\n\n## 认知功能训练\n1. 注意力训练\n2. 记忆力训练\n3. 执行功能训练\n4. 日常生活能力训练",
+                category: "chronic",
+                categoryName: "慢性病管理",
+                status: "draft",
+                statusText: "草稿",
+                author: "张文华医生",
+                authorDept: "心内科",
+                createTime: "2026-03-28 14:20",
+                updateTime: "2026-03-28 14:20",
+                readCount: 0,
+                likeCount: 0,
+                keywords: ["脑卒中", "康复", "训练"]
+            }
+        ];
+        
+        // 当前筛选条件
+        let currentFilter = {
+            category: 'all',
+            status: 'all',
+            search: ''
+        };
+        
+        // 当前编辑的文章ID（null表示新建）
+        let editingArticleId = null;
+        
+        // 待删除的文章ID
+        let deletingArticleId = null;
+        
+        // 分页相关变量
+        let currentPage = 1;
+        const pageSize = 5; // 每页显示5篇文章
+        
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            renderKnowledgeArticles(getCurrentPageArticles());
+            updateCategoryCounts();
+            updateStatusCounts();
+            updatePagination();
+            
+            // 设置导航栏当前页高亮
+           
+        });
+        
+        // 获取当前页的文章
+        function getCurrentPageArticles() {
+            let filteredArticles = knowledgeArticles;
+            
+            // 应用筛选条件
+            if (currentFilter.category !== 'all') {
+                filteredArticles = filteredArticles.filter(article => 
+                    article.category === currentFilter.category
+                );
+            }
+            
+            if (currentFilter.status !== 'all') {
+                filteredArticles = filteredArticles.filter(article => 
+                    article.status === currentFilter.status
+                );
+            }
+            
+            if (currentFilter.search) {
+                filteredArticles = filteredArticles.filter(article => 
+                    article.title.toLowerCase().includes(currentFilter.search) ||
+                    article.excerpt.toLowerCase().includes(currentFilter.search) ||
+                    article.keywords.some(keyword => 
+                        keyword.toLowerCase().includes(currentFilter.search)
+                    )
+                );
+            }
+            
+            // 计算分页
+            const startIndex = (currentPage - 1) * pageSize;
+            const endIndex = startIndex + pageSize;
+            return filteredArticles.slice(startIndex, endIndex);
+        }
+        
+        // 渲染知识文章列表
+        function renderKnowledgeArticles(articles) {
+            const list = document.getElementById('knowledgeList');
+            list.innerHTML = '';
+            
+            if (articles.length === 0) {
+                list.innerHTML = '<div class="knowledge-item" style="text-align: center; color: #666; padding: 40px;">暂无相关文章</div>';
+                return;
+            }
+            
+            articles.forEach(article => {
+                const item = document.createElement('div');
+                item.className = 'knowledge-item';
+                
+                // 根据状态设置样式
+                let statusClass = '';
+                if (article.status === 'draft') statusClass = 'status-draft-bg';
+                else if (article.status === 'published') statusClass = 'status-published-bg';
+                else if (article.status === 'review') statusClass = 'status-review-bg';
+                
+                item.innerHTML = `
+                    <div class="item-header">
+                        <div>
+                            <h3 class="item-title">${article.title}</h3>
+                            <div class="item-meta">
+                                <span>${article.categoryName}</span>
+                                <span>${article.author} | ${article.authorDept}</span>
+                                <span>最后更新: ${article.updateTime}</span>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="item-status ${statusClass}">${article.statusText}</span>
+                            <div class="item-actions">
+                                <button class="btn-icon btn-edit" onclick="editArticle(${article.id})" title="编辑">
+                                    ✏️
+                                </button>
+                                <button class="btn-delete" onclick="showDeleteConfirm(${article.id}, '${article.title}')">删除</button>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="item-excerpt">${article.excerpt}</p>
+                    <div class="item-footer">
+                        <div class="item-stats">
+                            <span>👁️ 阅读 ${article.readCount}</span>
+                            <span>❤️ 点赞 ${article.likeCount}</span>
+                            <span>关键词: ${article.keywords.join(', ')}</span>
+                        </div>
+                        <div>
+                            <button class="btn-secondary" onclick="previewArticle(${article.id})">预览</button>
+                        </div>
+                    </div>
+                `;
+                
+                list.appendChild(item);
+            });
+        }
+        
+        // 更新分类计数
+        function updateCategoryCounts() {
+            const counts = {
+                'all': knowledgeArticles.length,
+                'internal': knowledgeArticles.filter(a => a.category === 'internal').length,
+                'surgery': knowledgeArticles.filter(a => a.category === 'surgery').length,
+                'pediatrics': knowledgeArticles.filter(a => a.category === 'pediatrics').length,
+                'chronic': knowledgeArticles.filter(a => a.category === 'chronic').length,
+                'other': knowledgeArticles.filter(a => a.category === 'other').length
+            };
+            
+            Object.keys(counts).forEach(key => {
+                const element = document.getElementById(`count-${key}`);
+                if (element) {
+                    element.textContent = counts[key];
+                }
+            });
+        }
+        
+        // 更新状态计数
+        function updateStatusCounts() {
+            const counts = {
+                'all': knowledgeArticles.length,
+                'draft': knowledgeArticles.filter(a => a.status === 'draft').length,
+                'published': knowledgeArticles.filter(a => a.status === 'published').length,
+                'review': knowledgeArticles.filter(a => a.status === 'review').length
+            };
+            
+            Object.keys(counts).forEach(key => {
+                const element = document.getElementById(`count-status-${key}`);
+                if (element) {
+                    element.textContent = counts[key];
+                }
+            });
+        }
+        
+        // 按分类筛选
+        function filterByCategory(category) {
+            // 更新UI
+            document.querySelectorAll('.category-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.closest('.category-item').classList.add('active');
+            
+            // 更新筛选条件
+            currentFilter.category = category;
+            currentPage = 1; // 重置到第一页
+            renderKnowledgeArticles(getCurrentPageArticles());
+            updatePagination();
+        }
+        
+        // 按状态筛选
+        function filterByStatus(status) {
+            // 更新UI
+            document.querySelectorAll('.status-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.closest('.status-item').classList.add('active');
+            
+            // 更新筛选条件
+            currentFilter.status = status;
+            currentPage = 1; // 重置到第一页
+            renderKnowledgeArticles(getCurrentPageArticles());
+            updatePagination();
+        }
+        
+        // 搜索文章
+        function searchArticles() {
+            const searchText = document.getElementById('searchInput').value.toLowerCase();
+            currentFilter.search = searchText;
+            currentPage = 1; // 重置到第一页
+            renderKnowledgeArticles(getCurrentPageArticles());
+            updatePagination();
+        }
+        
+        // 更新分页控件
+        function updatePagination() {
+            let filteredArticles = knowledgeArticles;
+            
+            // 应用筛选条件计算总数
+            if (currentFilter.category !== 'all') {
+                filteredArticles = filteredArticles.filter(article => 
+                    article.category === currentFilter.category
+                );
+            }
+            
+            if (currentFilter.status !== 'all') {
+                filteredArticles = filteredArticles.filter(article => 
+                    article.status === currentFilter.status
+                );
+            }
+            
+            if (currentFilter.search) {
+                filteredArticles = filteredArticles.filter(article => 
+                    article.title.toLowerCase().includes(currentFilter.search) ||
+                    article.excerpt.toLowerCase().includes(currentFilter.search) ||
+                    article.keywords.some(keyword => 
+                        keyword.toLowerCase().includes(currentFilter.search)
+                    )
+                );
+            }
+            
+            const totalArticles = filteredArticles.length;
+            const totalPages = Math.ceil(totalArticles / pageSize);
+            
+            const pagination = document.getElementById('pagination');
+            if (!pagination) return;
+            
+            // 清空现有分页按钮
+            pagination.innerHTML = '';
+            
+            // 如果总页数为0，不显示分页
+            if (totalPages === 0) {
+                return;
+            }
+            
+            // 添加上一页按钮
+            const prevBtn = document.createElement('button');
+            prevBtn.className = 'page-btn';
+            prevBtn.textContent = '上一页';
+            prevBtn.disabled = currentPage === 1;
+            prevBtn.onclick = () => changePage(currentPage - 1);
+            pagination.appendChild(prevBtn);
+            
+            // 添加页码按钮
+            for (let i = 1; i <= totalPages; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.className = 'page-btn';
+                if (i === currentPage) {
+                    pageBtn.classList.add('active');
+                }
+                pageBtn.textContent = i;
+                pageBtn.onclick = () => changePage(i);
+                pagination.appendChild(pageBtn);
+            }
+            
+            // 添加下一页按钮
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'page-btn';
+            nextBtn.textContent = '下一页';
+            nextBtn.disabled = currentPage === totalPages;
+            nextBtn.onclick = () => changePage(currentPage + 1);
+            pagination.appendChild(nextBtn);
+        }
+        
+        // 切换页面
+        function changePage(page) {
+            if (page < 1) return;
+            
+            let filteredArticles = knowledgeArticles;
+            
+            // 应用筛选条件计算总数
+            if (currentFilter.category !== 'all') {
+                filteredArticles = filteredArticles.filter(article => 
+                    article.category === currentFilter.category
+                );
+            }
+            
+            if (currentFilter.status !== 'all') {
+                filteredArticles = filteredArticles.filter(article => 
+                    article.status === currentFilter.status
+                );
+            }
+            
+            if (currentFilter.search) {
+                filteredArticles = filteredArticles.filter(article => 
+                    article.title.toLowerCase().includes(currentFilter.search) ||
+                    article.excerpt.toLowerCase().includes(currentFilter.search) ||
+                    article.keywords.some(keyword => 
+                        keyword.toLowerCase().includes(currentFilter.search)
+                    )
+                );
+            }
+            
+            const totalPages = Math.ceil(filteredArticles.length / pageSize);
+            
+            if (page > totalPages && totalPages > 0) return;
+            
+            currentPage = page;
+            renderKnowledgeArticles(getCurrentPageArticles());
+            updatePagination();
+        }
+        
+        // 显示新建文章模态框
+        function showCreateModal() {
+            document.getElementById('modalTitle').textContent = '新建健康知识文章';
+            document.getElementById('articleForm').reset();
+            editingArticleId = null;
+            document.getElementById('createModal').style.display = 'flex';
+            document.getElementById('articleTitle').focus();
+        }
+        
+        // 关闭新建文章模态框
+        function closeCreateModal() {
+            document.getElementById('createModal').style.display = 'none';
+        }
+        
+        // 显示删除确认对话框
+        function showDeleteConfirm(id, title) {
+            deletingArticleId = id;
+            document.getElementById('confirmMessage').textContent = 
+                `您确定要删除文章"${title}"吗？此操作不可恢复。`;
+            document.getElementById('confirmModal').style.display = 'flex';
+        }
+        
+        // 关闭删除确认对话框
+        function closeConfirmModal() {
+            document.getElementById('confirmModal').style.display = 'none';
+            deletingArticleId = null;
+        }
+        
+        // 显示发布确认弹窗
+        function showPublishConfirm() {
+            if (!validateForm()) {
+                return;
+            }
+            document.getElementById('publishConfirmModal').style.display = 'flex';
+        }
+        
+        // 关闭发布确认弹窗
+        function closePublishConfirmModal() {
+            document.getElementById('publishConfirmModal').style.display = 'none';
+        }
+        
+        // 显示提示弹窗
+        function showAlertModal(title, message) {
+            document.getElementById('alertTitle').textContent = title;
+            document.getElementById('alertMessage').textContent = message;
+            document.getElementById('alertModal').style.display = 'flex';
+        }
+        
+        // 关闭提示弹窗
+        function closeAlertModal() {
+            document.getElementById('alertModal').style.display = 'none';
+        }
+        
+        // 验证表单
+        function validateForm() {
+            const title = document.getElementById('articleTitle').value.trim();
+            const category = document.getElementById('articleCategory').value;
+            const content = document.getElementById('articleContent').value.trim();
+            
+            if (!title) {
+                showAlertModal('提示', '请输入文章标题');
+                document.getElementById('articleTitle').focus();
+                return false;
+            }
+            
+            if (!category) {
+                showAlertModal('提示', '请选择文章分类');
+                document.getElementById('articleCategory').focus();
+                return false;
+            }
+            
+            if (!content) {
+                showAlertModal('提示', '请输入文章内容');
+                document.getElementById('articleContent').focus();
+                return false;
+            }
+            
+            return true;
+        }
+        
+        // 保存为草稿
+        function saveArticleAsDraft() {
+            if (validateForm()) {
+                saveArticleLogic('draft');
+            }
+        }
+        
+        // 发布文章
+        function publishArticle() {
+            closePublishConfirmModal();
+            saveArticleLogic('review');
+        }
+        
+        // 保存文章逻辑
+        function saveArticleLogic(status) {
+            const title = document.getElementById('articleTitle').value;
+            const category = document.getElementById('articleCategory').value;
+            const content = document.getElementById('articleContent').value;
+            const keywords = document.getElementById('articleKeywords').value;
+            
+            if (editingArticleId) {
+                // 编辑现有文章
+                const articleIndex = knowledgeArticles.findIndex(a => a.id === editingArticleId);
+                if (articleIndex !== -1) {
+                    knowledgeArticles[articleIndex].title = title;
+                    knowledgeArticles[articleIndex].category = category;
+                    knowledgeArticles[articleIndex].categoryName = getCategoryName(category);
+                    knowledgeArticles[articleIndex].status = status;
+                    knowledgeArticles[articleIndex].statusText = getStatusText(status);
+                    knowledgeArticles[articleIndex].content = content;
+                    knowledgeArticles[articleIndex].excerpt = content.length > 100 ? content.substring(0, 100) + '...' : content;
+                    knowledgeArticles[articleIndex].keywords = keywords.split(',').map(k => k.trim()).filter(k => k);
+                    knowledgeArticles[articleIndex].updateTime = new Date().toLocaleString('zh-CN');
+                    
+                    showAlertModal('成功', `文章已${status === 'review' ? '保存并提交发布，状态为待审核' : '保存为草稿'}！`);
+                }
+            } else {
+                // 创建新文章
+                const newArticle = {
+                    id: knowledgeArticles.length > 0 ? Math.max(...knowledgeArticles.map(a => a.id)) + 1 : 1,
+                    title: title,
+                    excerpt: content.length > 100 ? content.substring(0, 100) + '...' : content,
+                    content: content,
+                    category: category,
+                    categoryName: getCategoryName(category),
+                    status: status,
+                    statusText: getStatusText(status),
+                    author: '张文华医生',
+                    authorDept: '心内科',
+                    createTime: new Date().toLocaleString('zh-CN'),
+                    updateTime: new Date().toLocaleString('zh-CN'),
+                    readCount: 0,
+                    likeCount: 0,
+                    keywords: keywords.split(',').map(k => k.trim()).filter(k => k)
+                };
+                
+                knowledgeArticles.unshift(newArticle);
+                showAlertModal('成功', `文章已${status === 'review' ? '保存并提交发布，状态为待审核' : '保存为草稿'}！`);
+            }
+            
+            // 重置表单并更新UI
+            closeCreateModal();
+            currentPage = 1; // 新增文章后回到第一页
+            renderKnowledgeArticles(getCurrentPageArticles());
+            updateCategoryCounts();
+            updateStatusCounts();
+            updatePagination();
+            
+            return false;
+        }
+        
+        // 获取分类名称
+        function getCategoryName(category) {
+            const categories = {
+                'internal': '内科',
+                'surgery': '外科',
+                'pediatrics': '儿科',
+                'chronic': '慢性病管理',
+                'other': '其他'
+            };
+            return categories[category] || '其他';
+        }
+        
+        // 获取状态文本
+        function getStatusText(status) {
+            const statusMap = {
+                'draft': '草稿',
+                'published': '已发布',
+                'review': '待审核'
+            };
+            return statusMap[status] || '草稿';
+        }
+        
+        // 编辑文章
+        function editArticle(id) {
+            const article = knowledgeArticles.find(a => a.id === id);
+            if (!article) return;
+            
+            document.getElementById('modalTitle').textContent = '编辑健康知识文章';
+            document.getElementById('articleForm').reset();
+            editingArticleId = id;
+            
+            document.getElementById('articleTitle').value = article.title;
+            document.getElementById('articleCategory').value = article.category;
+            document.getElementById('articleContent').value = article.content;
+            document.getElementById('articleKeywords').value = article.keywords.join(', ');
+            
+            document.getElementById('createModal').style.display = 'flex';
+        }
+        
+        // 预览文章
+        function previewArticle(id) {
+            const article = knowledgeArticles.find(a => a.id === id);
+            if (!article) return;
+            
+            const previewContent = document.getElementById('previewContent');
+            const modalTitle = document.getElementById('previewModalTitle');
+            
+            modalTitle.textContent = `文章预览 - ${article.title}`;
+            
+            previewContent.innerHTML = `
+                <div class="preview-meta">
+                    <span>分类: ${article.categoryName}</span>
+                    <span>作者: ${article.author} | ${article.authorDept}</span>
+                    <span>状态: <span class="item-status ${getStatusClass(article.status)}">${article.statusText}</span></span>
+                    <span>创建时间: ${article.createTime}</span>
+                </div>
+                <div class="preview-content">
+                    ${formatContent(article.content)}
+                </div>
+            `;
+            
+            document.getElementById('previewModal').style.display = 'flex';
+        }
+        
+        // 格式化内容（简单地将换行转换为<br>）
+        function formatContent(content) {
+            return content.replace(/\n/g, '<br>');
+        }
+        
+        // 根据状态获取CSS类
+        function getStatusClass(status) {
+            if (status === 'draft') return 'status-draft-bg';
+            if (status === 'published') return 'status-published-bg';
+            if (status === 'review') return 'status-review-bg';
+            return '';
+        }
+        
+        // 关闭预览模态框
+        function closePreviewModal() {
+            document.getElementById('previewModal').style.display = 'none';
+        }
+        
+        // 确认删除文章
+        function confirmDelete() {
+            if (deletingArticleId) {
+                const index = knowledgeArticles.findIndex(a => a.id === deletingArticleId);
+                if (index !== -1) {
+                    knowledgeArticles.splice(index, 1);
+                    renderKnowledgeArticles(getCurrentPageArticles());
+                    updateCategoryCounts();
+                    updateStatusCounts();
+                    updatePagination();
+                    
+                    // 显示删除成功消息
+                    showAlertModal('成功', '文章已删除！');
+                }
+            }
+            
+            closeConfirmModal();
+        }
+        
+        // 高亮显示当前页面
+        function highlightCurrentPage() {
+            const currentPage = window.location.pathname.split('/').pop();
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                
+                // 获取链接的href，去除路径部分，只保留文件名
+                const linkHref = link.getAttribute('href');
+                if (linkHref === currentPage) {
+                    link.classList.add('active');
+                }
+            });
+        }
+        
+        // 点击模态框外部关闭模态框
+        window.onclick = function(event) {
+            if (event.target.id === 'createModal') {
+                closeCreateModal();
+            }
+            if (event.target.id === 'previewModal') {
+                closePreviewModal();
+            }
+            if (event.target.id === 'confirmModal') {
+                closeConfirmModal();
+            }
+            if (event.target.id === 'publishConfirmModal') {
+                closePublishConfirmModal();
+            }
+            if (event.target.id === 'alertModal') {
+                closeAlertModal();
+            }
+        }
+    </script>
+</body>
+</html>

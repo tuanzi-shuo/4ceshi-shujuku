@@ -1,0 +1,1836 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>元生智护系统 - 个人账户</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3498db;
+            --primary-dark: #2980b9;
+            --secondary: #2c3e50;
+            --light: #f8f9fa;
+            --gray: #666;
+            --white: #ffffff;
+            --shadow-sm: 0 4px 12px rgba(0,0,0,0.05);
+            --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
+            --shadow-lg: 0 12px 32px rgba(52, 152, 219, 0.15);
+            --radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --danger: #e74c3c;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --info: #3498db;
+            --bg-gradient: linear-gradient(135deg, #f0f8ff 0%, #e6f2ff 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft Yahei', sans-serif;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            line-height: 1.6;
+            color: var(--secondary);
+        }
+
+        .navbar {
+            background-color: var(--white);
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            color: var(--secondary);
+            font-size: 1.8rem;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .navbar-brand:hover {
+            color: var(--primary);
+            transform: scale(1.05);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--gray);
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: var(--transition);
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-link.active,
+        .nav-link:hover {
+            color: var(--secondary);
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 2.5rem 1.5rem;
+            max-width: 1280px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .section-title {
+            color: var(--secondary);
+            font-size: 2rem;
+            margin-bottom: 2.5rem;
+            text-align: center;
+            position: relative;
+            padding-bottom: 1.2rem;
+        }
+
+        .section-title::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            border-radius: 2px;
+        }
+
+        .profile-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .profile-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .profile-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            padding: 2rem;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .profile-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .avatar-container {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 1.5rem;
+        }
+
+        .avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--primary);
+            background: linear-gradient(45deg, #e0f7fa, #bbdefb);
+        }
+
+        .edit-avatar {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: var(--primary);
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .edit-avatar:hover {
+            background: var(--primary-dark);
+            transform: scale(1.1);
+        }
+
+        .user-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--secondary);
+        }
+
+        .user-id {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .user-stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 1.5rem 0;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .info-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            padding: 2rem;
+            transition: var(--transition);
+        }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .info-item {
+            margin-bottom: 1.2rem;
+            position: relative;
+        }
+
+        .info-label {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-bottom: 0.3rem;
+        }
+
+        .info-value {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--secondary);
+            padding: 0.5rem;
+            border-radius: 6px;
+            background: var(--light);
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+        }
+
+        .edit-btn {
+            background: var(--light);
+            border: none;
+            color: var(--primary);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .edit-btn:hover {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .edit-input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            margin-top: 0.3rem;
+        }
+
+        .health-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .metric-card {
+            background: var(--light);
+            border-radius: var(--radius);
+            padding: 1.2rem;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .metric-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .metric-icon {
+            font-size: 2rem;
+            margin-bottom: 0.8rem;
+            color: var(--primary);
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .device-list {
+            margin-top: 1.5rem;
+        }
+
+        .device-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            transition: var(--transition);
+        }
+
+        .device-item:hover {
+            background: var(--light);
+            border-radius: var(--radius);
+        }
+
+        .device-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .device-info {
+            flex: 1;
+        }
+
+        .device-name {
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .device-status {
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .status-connected {
+            color: var(--success);
+        }
+
+        .status-disconnected {
+            color: var(--danger);
+        }
+
+        .device-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .device-btn {
+            background: var(--light);
+            border: none;
+            color: var(--gray);
+            padding: 0.5rem;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .device-btn:hover {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .action-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 1.5rem 1rem;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .action-card:hover .action-icon {
+            color: white;
+        }
+
+        .action-icon {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            transition: var(--transition);
+        }
+
+        .action-label {
+            font-weight: 500;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: var(--radius);
+            max-width: 800px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--secondary);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--white);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--success);
+            color: var(--white);
+            padding: 1rem 2rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+            display: none;
+            z-index: 3000;
+        }
+
+        .report-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .report-card {
+            background: var(--light);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .report-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .report-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .report-data {
+            margin-bottom: 1rem;
+        }
+
+        .report-data-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .chart-container {
+            height: 200px;
+            margin: 1rem 0;
+            background: white;
+            border-radius: var(--radius);
+            padding: 1rem;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+        }
+
+        .chart-bar {
+            width: 30px;
+            background: var(--primary);
+            border-radius: 4px 4px 0 0;
+            position: relative;
+        }
+
+        .chart-bar-label {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        .appointment-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .appointment-form .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .appointment-form .full-width {
+            grid-column: span 2;
+        }
+
+        .medication-list {
+            margin-top: 1.5rem;
+        }
+
+        .medication-item {
+            background: var(--light);
+            border-radius: var(--radius);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .medication-info {
+            flex: 1;
+        }
+
+        .medication-name {
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .medication-details {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .family-member {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .family-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 1rem;
+            border: 2px solid var(--primary);
+        }
+
+        .family-info {
+            flex: 1;
+        }
+
+        .family-name {
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .family-relation {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .settings-tabs {
+            display: flex;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 1.5rem;
+        }
+
+        .settings-tab {
+            padding: 0.8rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: var(--transition);
+        }
+
+        .settings-tab.active {
+            border-bottom: 3px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .settings-content {
+            display: none;
+        }
+
+        .settings-content.active {
+            display: block;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background: var(--white);
+            margin-top: auto;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.03);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <span>用户端</span> | 元生智护系统
+        </div>
+        <ul class="nav-links">
+            <li><a href="用户端首页.html" class="nav-link">首页</a></li>
+            <li><a href="用户端元生产品.html" class="nav-link">元生产品</a></li>
+            <li><a href="用户端附近医疗机构.html" class="nav-link">附近医疗机构</a></li>
+            <li><a href="用户端社区支持.html" class="nav-link">社区支持</a></li>
+            <li><a href="用户端个人账户.html" class="nav-link active">个人账户</a></li>
+        </ul>
+    </nav>
+
+    <div class="main-content">
+        <h1 class="section-title">个人账户</h1>
+        
+        <div class="profile-container">
+            <div class="profile-card">
+                <div class="avatar-container">
+                    <img id="userAvatar" src="https://randomuser.me/api/portraits/women/65.jpg" alt="用户头像" class="avatar">
+                    <div class="edit-avatar" onclick="document.getElementById('avatarInput').click()">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                    <input type="file" id="avatarInput" accept="image/*" style="display: none;" onchange="changeAvatar(event)">
+                </div>
+                <h2 class="user-name" id="userName">张雅婷</h2>
+                <div class="user-id">ID: <span id="userId">YSH202405001</span></div>
+                
+                <div class="user-stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="followCount">28</div>
+                        <div class="stat-label">关注</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="fansCount">142</div>
+                        <div class="stat-label">粉丝</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="postCount">56</div>
+                        <div class="stat-label">帖子</div>
+                    </div>
+                </div>
+                
+                <button class="edit-btn" onclick="openEditProfileModal()">
+                    <i class="fas fa-edit"></i> 编辑资料
+                </button>
+            </div>
+            
+            <div class="info-card">
+                <h2 class="card-title"><i class="fas fa-user-circle"></i> 基本信息</h2>
+                
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">姓名</div>
+                        <div class="info-value" id="infoName">张雅婷</div>
+                        <button class="edit-btn" onclick="editInfo('name')">
+                            <i class="fas fa-edit"></i> 编辑
+                        </button>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">性别</div>
+                        <div class="info-value" id="infoGender">女</div>
+                        <button class="edit-btn" onclick="editInfo('gender')">
+                            <i class="fas fa-edit"></i> 编辑
+                        </button>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">年龄</div>
+                        <div class="info-value" id="infoAge">32岁</div>
+                        <button class="edit-btn" onclick="editInfo('age')">
+                            <i class="fas fa-edit"></i> 编辑
+                        </button>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">手机号码</div>
+                        <div class="info-value" id="infoPhone">138****5678</div>
+                        <button class="edit-btn" onclick="editInfo('phone')">
+                            <i class="fas fa-edit"></i> 编辑
+                        </button>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">电子邮箱</div>
+                        <div class="info-value" id="infoEmail">zhangyt@example.com</div>
+                        <button class="edit-btn" onclick="editInfo('email')">
+                            <i class="fas fa-edit"></i> 编辑
+                        </button>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">注册日期</div>
+                        <div class="info-value" id="infoRegDate">2023-06-15</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="info-card">
+            <h2 class="card-title"><i class="fas fa-heartbeat"></i> 健康指标</h2>
+            
+            <div class="health-metrics">
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="metric-value" id="heartRate">72</div>
+                    <div class="metric-label">静息心率 (BPM)</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-tachometer-alt"></i>
+                    </div>
+                    <div class="metric-value" id="bloodPressure">120/80</div>
+                    <div class="metric-label">血压 (mmHg)</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-bed"></i>
+                    </div>
+                    <div class="metric-value" id="sleepDuration">7.2h</div>
+                    <div class="metric-label">平均睡眠</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-walking"></i>
+                    </div>
+                    <div class="metric-value" id="dailySteps">8,245</div>
+                    <div class="metric-label">步数/日</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-weight"></i>
+                    </div>
+                    <div class="metric-value" id="weight">58kg</div>
+                    <div class="metric-label">体重</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-lungs"></i>
+                    </div>
+                    <div class="metric-value" id="oxygenLevel">98%</div>
+                    <div class="metric-label">血氧饱和度</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="info-card">
+            <h2 class="card-title"><i class="fas fa-mobile-alt"></i> 我的设备</h2>
+            
+            <div class="device-list">
+                <div class="device-item">
+                    <div class="device-icon">
+                        <i class="fas fa-heartbeat"></i>
+                    </div>
+                    <div class="device-info">
+                        <div class="device-name">元生智能手环 Pro</div>
+                        <div class="device-status status-connected">
+                            <i class="fas fa-circle"></i> 已连接
+                        </div>
+                    </div>
+                    <div class="device-actions">
+                        <button class="device-btn" title="设备设置" onclick="deviceSettings('手环')">
+                            <i class="fas fa-cog"></i>
+                        </button>
+                        <button class="device-btn" title="断开连接" onclick="toggleDeviceConnection('手环', this)">
+                            <i class="fas fa-unlink"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="device-item">
+                    <div class="device-icon">
+                        <i class="fas fa-thermometer-half"></i>
+                    </div>
+                    <div class="device-info">
+                        <div class="device-name">元生体温监测仪</div>
+                        <div class="device-status status-connected">
+                            <i class="fas fa-circle"></i> 已连接
+                        </div>
+                    </div>
+                    <div class="device-actions">
+                        <button class="device-btn" title="设备设置" onclick="deviceSettings('体温计')">
+                            <i class="fas fa-cog"></i>
+                        </button>
+                        <button class="device-btn" title="断开连接" onclick="toggleDeviceConnection('体温计', this)">
+                            <i class="fas fa-unlink"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="device-item">
+                    <div class="device-icon">
+                        <i class="fas fa-lungs"></i>
+                    </div>
+                    <div class="device-info">
+                        <div class="device-name">元生呼吸训练器</div>
+                        <div class="device-status status-disconnected">
+                            <i class="fas fa-circle"></i> 未连接
+                        </div>
+                    </div>
+                    <div class="device-actions">
+                        <button class="device-btn" title="设备设置" onclick="deviceSettings('呼吸训练器')">
+                            <i class="fas fa-cog"></i>
+                        </button>
+                        <button class="device-btn" title="连接设备" onclick="toggleDeviceConnection('呼吸训练器', this)">
+                            <i class="fas fa-link"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <h2 class="section-title" style="font-size: 1.5rem; margin: 3rem 0 1.5rem;">快捷功能</h2>
+        
+        <div class="quick-actions">
+            <div class="action-card" onclick="openHealthReport()">
+                <div class="action-icon">
+                    <i class="fas fa-file-medical"></i>
+                </div>
+                <div class="action-label">健康报告</div>
+            </div>
+            
+            <div class="action-card" onclick="openAppointment()">
+                <div class="action-icon">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <div class="action-label">预约挂号</div>
+            </div>
+            
+            <div class="action-card" onclick="openMedicationReminder()">
+                <div class="action-icon">
+                    <i class="fas fa-pills"></i>
+                </div>
+                <div class="action-label">用药提醒</div>
+            </div>
+            
+            <div class="action-card" onclick="openFamilyManagement()">
+                <div class="action-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="action-label">家人管理</div>
+            </div>
+            
+            <div class="action-card" onclick="openSystemSettings()">
+                <div class="action-icon">
+                    <i class="fas fa-cog"></i>
+                </div>
+                <div class="action-label">系统设置</div>
+            </div>
+            
+            <div class="action-card" onclick="openHelpCenter()">
+                <div class="action-icon">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <div class="action-label">帮助中心</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 编辑资料模态框 -->
+    <div class="modal" id="editProfileModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('editProfileModal')">&times;</span>
+            <h3>编辑个人资料</h3>
+            
+            <div class="form-group">
+                <label class="form-label">姓名</label>
+                <input type="text" class="form-input" id="editName" value="张雅婷">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">性别</label>
+                <select class="form-input" id="editGender">
+                    <option value="男">男</option>
+                    <option value="女" selected>女</option>
+                    <option value="其他">其他</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">年龄</label>
+                <input type="number" class="form-input" id="editAge" value="32">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">手机号码</label>
+                <input type="tel" class="form-input" id="editPhone" value="13800135678">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">电子邮箱</label>
+                <input type="email" class="form-input" id="editEmail" value="zhangyt@example.com">
+            </div>
+            
+            <div class="modal-buttons">
+                <button class="btn btn-outline" onclick="closeModal('editProfileModal')">取消</button>
+                <button class="btn btn-primary" onclick="saveProfile()">保存更改</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 编辑单项信息模态框 -->
+    <div class="modal" id="editInfoModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('editInfoModal')">&times;</span>
+            <h3 id="editInfoTitle">编辑信息</h3>
+            
+            <div class="form-group">
+                <label class="form-label" id="editInfoLabel">信息</label>
+                <input type="text" class="form-input" id="editInfoValue">
+            </div>
+            
+            <div class="modal-buttons">
+                <button class="btn btn-outline" onclick="closeModal('editInfoModal')">取消</button>
+                <button class="btn btn-primary" onclick="saveInfo()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 健康报告模态框 -->
+    <div class="modal" id="healthReportModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('healthReportModal')">&times;</span>
+            <h3><i class="fas fa-file-medical"></i> 健康报告</h3>
+            
+            <div class="report-grid">
+                <div class="report-card">
+                    <div class="report-title"><i class="fas fa-heartbeat"></i> 心脏健康</div>
+                    <div class="report-data">
+                        <div class="report-data-item">
+                            <span>静息心率</span>
+                            <span>72 BPM</span>
+                        </div>
+                        <div class="report-data-item">
+                            <span>血压</span>
+                            <span>120/80 mmHg</span>
+                        </div>
+                        <div class="report-data-item">
+                            <span>心电图</span>
+                            <span>正常</span>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <div class="chart-bar" style="height: 70%;">
+                            <div class="chart-bar-label">周一</div>
+                        </div>
+                        <div class="chart-bar" style="height: 85%;">
+                            <div class="chart-bar-label">周二</div>
+                        </div>
+                        <div class="chart-bar" style="height: 65%;">
+                            <div class="chart-bar-label">周三</div>
+                        </div>
+                        <div class="chart-bar" style="height: 90%;">
+                            <div class="chart-bar-label">周四</div>
+                        </div>
+                        <div class="chart-bar" style="height: 75%;">
+                            <div class="chart-bar-label">周五</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="report-card">
+                    <div class="report-title"><i class="fas fa-bed"></i> 睡眠分析</div>
+                    <div class="report-data">
+                        <div class="report-data-item">
+                            <span>平均睡眠</span>
+                            <span>7.2 小时</span>
+                        </div>
+                        <div class="report-data-item">
+                            <span>深睡比例</span>
+                            <span>25%</span>
+                        </div>
+                        <div class="report-data-item">
+                            <span>睡眠质量</span>
+                            <span>良好</span>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <div class="chart-bar" style="height: 60%; background: #3498db;">
+                            <div class="chart-bar-label">浅睡</div>
+                        </div>
+                        <div class="chart-bar" style="height: 30%; background: #2ecc71;">
+                            <div class="chart-bar-label">深睡</div>
+                        </div>
+                        <div class="chart-bar" style="height: 10%; background: #9b59b6;">
+                            <div class="chart-bar-label">REM</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="report-card">
+                    <div class="report-title"><i class="fas fa-running"></i> 活动数据</div>
+                    <div class="report-data">
+                        <div class="report-data-item">
+                            <span>日均步数</span>
+                            <span>8,245</span>
+                        </div>
+                        <div class="report-data-item">
+                            <span>活动时间</span>
+                            <span>45 分钟</span>
+                        </div>
+                        <div class="report-data-item">
+                            <span>卡路里消耗</span>
+                            <span>320 kcal</span>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <div class="chart-bar" style="height: 40%;">
+                            <div class="chart-bar-label">周一</div>
+                        </div>
+                        <div class="chart-bar" style="height: 65%;">
+                            <div class="chart-bar-label">周二</div>
+                        </div>
+                        <div class="chart-bar" style="height: 55%;">
+                            <div class="chart-bar-label">周三</div>
+                        </div>
+                        <div class="chart-bar" style="height: 80%;">
+                            <div class="chart-bar-label">周四</div>
+                        </div>
+                        <div class="chart-bar" style="height: 70%;">
+                            <div class="chart-bar-label">周五</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-buttons">
+                <button class="btn btn-outline" onclick="exportHealthReport()">
+                    <i class="fas fa-download"></i> 导出PDF
+                </button>
+                <button class="btn btn-primary" onclick="closeModal('healthReportModal')">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 预约挂号模态框 -->
+    <div class="modal" id="appointmentModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('appointmentModal')">&times;</span>
+            <h3><i class="fas fa-calendar-check"></i> 预约挂号</h3>
+            
+            <div class="appointment-form">
+                <div class="form-group full-width">
+                    <label class="form-label">选择医院</label>
+                    <select class="form-input" id="hospitalSelect">
+                        <option value="">-- 请选择医院 --</option>
+                        <option value="1">元生第一医院</option>
+                        <option value="2">元生中心医院</option>
+                        <option value="3">元生社区健康中心</option>
+                    </select>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label class="form-label">选择科室</label>
+                    <select class="form-input" id="departmentSelect">
+                        <option value="">-- 请选择科室 --</option>
+                        <option value="1">心血管科</option>
+                        <option value="2">神经内科</option>
+                        <option value="3">内分泌科</option>
+                        <option value="4">骨科</option>
+                    </select>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label class="form-label">选择医生</label>
+                    <select class="form-input" id="doctorSelect">
+                        <option value="">-- 请选择医生 --</option>
+                        <option value="1">王医生 (主任医师)</option>
+                        <option value="2">李医生 (副主任医师)</option>
+                        <option value="3">张医生 (主治医师)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">预约日期</label>
+                    <input type="date" class="form-input" id="appointmentDate">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">预约时间</label>
+                    <select class="form-input" id="appointmentTime">
+                        <option value="">-- 请选择时间 --</option>
+                        <option value="1">08:00-09:00</option>
+                        <option value="2">09:00-10:00</option>
+                        <option value="3">10:00-11:00</option>
+                        <option value="4">14:00-15:00</option>
+                        <option value="5">15:00-16:00</option>
+                    </select>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label class="form-label">就诊人</label>
+                    <select class="form-input" id="patientSelect">
+                        <option value="self">本人</option>
+                        <option value="family1">张三 (配偶)</option>
+                        <option value="family2">李四 (父母)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label class="form-label">病情描述</label>
+                    <textarea class="form-input" id="symptomDescription" rows="3" placeholder="请简要描述您的症状..."></textarea>
+                </div>
+            </div>
+            
+            <div class="modal-buttons">
+                <button class="btn btn-outline" onclick="closeModal('appointmentModal')">取消</button>
+                <button class="btn btn-primary" onclick="submitAppointment()">提交预约</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 用药提醒模态框 -->
+    <div class="modal" id="medicationModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('medicationModal')">&times;</span>
+            <h3><i class="fas fa-pills"></i> 用药提醒</h3>
+            
+            <button class="btn btn-primary" style="margin-bottom: 1rem;" onclick="openAddMedicationModal()">
+                <i class="fas fa-plus"></i> 添加提醒
+            </button>
+            
+            <div class="medication-list">
+                <div class="medication-item">
+                    <div class="medication-info">
+                        <div class="medication-name">阿司匹林肠溶片</div>
+                        <div class="medication-details">每日一次，每次100mg，早餐后服用</div>
+                        <div class="medication-details">下次提醒: 明天 08:00</div>
+                    </div>
+                    <div>
+                        <button class="device-btn" title="编辑" onclick="editMedication(1)">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="device-btn" title="删除" onclick="deleteMedication(1)">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="medication-item">
+                    <div class="medication-info">
+                        <div class="medication-name">二甲双胍片</div>
+                        <div class="medication-details">每日两次，每次500mg，早晚餐后服用</div>
+                        <div class="medication-details">下次提醒: 今天 18:30</div>
+                    </div>
+                    <div>
+                        <button class="device-btn" title="编辑" onclick="editMedication(2)">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="device-btn" title="删除" onclick="deleteMedication(2)">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-buttons">
+                <button class="btn btn-primary" onclick="closeModal('medicationModal')">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 家人管理模态框 -->
+    <div class="modal" id="familyModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('familyModal')">&times;</span>
+            <h3><i class="fas fa-users"></i> 家人管理</h3>
+            
+            <button class="btn btn-primary" style="margin-bottom: 1rem;" onclick="openAddFamilyMemberModal()">
+                <i class="fas fa-plus"></i> 添加家人
+            </button>
+            
+            <div class="family-member">
+                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="家人头像" class="family-avatar">
+                <div class="family-info">
+                    <div class="family-name">张伟</div>
+                    <div class="family-relation">配偶 · 35岁</div>
+                    <div class="family-relation">上次体检: 2024-04-15</div>
+                </div>
+                <div>
+                    <button class="device-btn" title="查看健康档案" onclick="viewFamilyHealthRecord('张伟')">
+                        <i class="fas fa-heartbeat"></i>
+                    </button>
+                    <button class="device-btn" title="编辑" onclick="editFamilyMember('张伟')">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="family-member">
+                <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="家人头像" class="family-avatar">
+                <div class="family-info">
+                    <div class="family-name">李芳</div>
+                    <div class="family-relation">母亲 · 62岁</div>
+                    <div class="family-relation">上次体检: 2024-03-22</div>
+                </div>
+                <div>
+                    <button class="device-btn" title="查看健康档案" onclick="viewFamilyHealthRecord('李芳')">
+                        <i class="fas fa-heartbeat"></i>
+                    </button>
+                    <button class="device-btn" title="编辑" onclick="editFamilyMember('李芳')">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="modal-buttons">
+                <button class="btn btn-primary" onclick="closeModal('familyModal')">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 系统设置模态框 -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('settingsModal')">&times;</span>
+            <h3><i class="fas fa-cog"></i> 系统设置</h3>
+            
+            <div class="settings-tabs">
+                <div class="settings-tab active" onclick="switchSettingsTab('account')">账户安全</div>
+                <div class="settings-tab" onclick="switchSettingsTab('notification')">通知管理</div>
+                <div class="settings-tab" onclick="switchSettingsTab('appearance')">界面风格</div>
+                <div class="settings-tab" onclick="switchSettingsTab('about')">关于我们</div>
+            </div>
+            
+            <div id="account-settings" class="settings-content active">
+                <div class="form-group">
+                    <label class="form-label">修改密码</label>
+                    <input type="password" class="form-input" placeholder="旧密码">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">新密码</label>
+                    <input type="password" class="form-input" placeholder="新密码">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">确认新密码</label>
+                    <input type="password" class="form-input" placeholder="确认新密码">
+                </div>
+                <button class="btn btn-primary">保存更改</button>
+            </div>
+            
+            <div id="notification-settings" class="settings-content">
+                <div class="form-group">
+                    <label class="form-label">通知设置</label>
+                    <div style="margin-top: 1rem;">
+                        <label style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+                            <input type="checkbox" checked style="margin-right: 0.5rem;"> 健康报告推送
+                        </label>
+                        <label style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+                            <input type="checkbox" checked style="margin-right: 0.5rem;"> 预约提醒
+                        </label>
+                        <label style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+                            <input type="checkbox" checked style="margin-right: 0.5rem;"> 用药提醒
+                        </label>
+                        <label style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+                            <input type="checkbox" style="margin-right: 0.5rem;"> 促销信息
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">勿扰时段</label>
+                    <div style="display: flex; gap: 1rem;">
+                        <input type="time" class="form-input" value="22:00">
+                        <span>至</span>
+                        <input type="time" class="form-input" value="07:00">
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary">保存设置</button>
+            </div>
+            
+            <div id="appearance-settings" class="settings-content">
+                <div class="form-group">
+                    <label class="form-label">主题模式</label>
+                    <select class="form-input">
+                        <option>浅色模式</option>
+                        <option>深色模式</option>
+                        <option>跟随系统</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">字体大小</label>
+                    <select class="form-input">
+                        <option>小</option>
+                        <option selected>中</option>
+                        <option>大</option>
+                    </select>
+                </div>
+                
+                <button class="btn btn-primary">应用设置</button>
+            </div>
+            
+            <div id="about-settings" class="settings-content">
+                <div style="text-align: center; padding: 1rem;">
+                    <img src="https://via.placeholder.com/100x100?text=Logo" alt="元生智护系统" style="width: 100px; height: 100px; margin-bottom: 1rem;">
+                    <h4>元生智护系统</h4>
+                    <p style="margin: 0.5rem 0;">版本号: v2.5.1</p>
+                    <p style="margin: 0.5rem 0;">医疗设备认证编号: 国械注准20253140001</p>
+                    
+                    <div style="margin-top: 1.5rem;">
+                        <button class="btn btn-outline" onclick="openPrivacyPolicy()" style="margin: 0 0.5rem;">
+                            隐私政策
+                        </button>
+                        <button class="btn btn-outline" onclick="openUserAgreement()" style="margin: 0 0.5rem;">
+                            用户协议
+                        </button>
+                        <button class="btn btn-outline" onclick="openFeedback()" style="margin: 0 0.5rem;">
+                            意见反馈
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 帮助中心模态框 -->
+    <div class="modal" id="helpModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('helpModal')">&times;</span>
+            <h3><i class="fas fa-question-circle"></i> 帮助中心</h3>
+            
+            <div style="margin-top: 1.5rem;">
+                <div class="form-group">
+                    <label class="form-label">常见问题</label>
+                    <select class="form-input" onchange="showFAQ(this.value)">
+                        <option value="">-- 请选择常见问题 --</option>
+                        <option value="1">如何绑定医疗设备？</option>
+                        <option value="2">如何导出健康报告？</option>
+                        <option value="3">如何添加家人？</option>
+                        <option value="4">忘记密码怎么办？</option>
+                    </select>
+                </div>
+                
+                <div id="faq-answer" style="padding: 1rem; background: var(--light); border-radius: var(--radius); margin-top: 1rem; display: none;">
+                    <!-- FAQ答案会动态显示在这里 -->
+                </div>
+                
+                <div style="margin-top: 2rem;">
+                    <h4>联系客服</h4>
+                    <p>电话: 400-123-4567</p>
+                    <p>邮箱: support@yuansheng.com</p>
+                    <p>工作时间: 周一至周日 8:00-22:00</p>
+                </div>
+            </div>
+            
+            <div class="modal-buttons">
+                <button class="btn btn-primary" onclick="closeModal('helpModal')">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">操作成功！</div>
+
+    <footer>
+        <p>© 2026 元生智护系统 版权所有 | 医疗设备认证编号：国械注准20253140001</p>
+    </footer>
+
+    <script>
+        // 当前编辑的信息类型
+        let currentEditType = '';
+        
+        // 显示提示
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            if (!toast) return;
+            
+            toast.textContent = message;
+            toast.style.display = 'block';
+            
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+        
+        // 关闭模态框
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.classList.remove('active');
+        }
+        
+        // 更换头像
+        function changeAvatar(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('userAvatar').src = e.target.result;
+                localStorage.setItem('userAvatar', e.target.result);
+                showToast('头像更新成功！');
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        // 打开编辑资料模态框
+        function openEditProfileModal() {
+            document.getElementById('editProfileModal').classList.add('active');
+        }
+        
+        // 保存个人资料
+        function saveProfile() {
+            const name = document.getElementById('editName').value;
+            const gender = document.getElementById('editGender').value;
+            const age = document.getElementById('editAge').value;
+            const phone = document.getElementById('editPhone').value;
+            const email = document.getElementById('editEmail').value;
+            
+            // 更新页面显示
+            document.getElementById('userName').textContent = name;
+            document.getElementById('infoName').textContent = name;
+            document.getElementById('infoGender').textContent = gender;
+            document.getElementById('infoAge').textContent = age + '岁';
+            document.getElementById('infoPhone').textContent = phone.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2');
+            document.getElementById('infoEmail').textContent = email;
+            
+            // 保存到localStorage
+            const userInfo = {
+                name, gender, age, phone, email
+            };
+            localStorage.setItem('userInfo', JSON.stringify(userInfo));
+            
+            closeModal('editProfileModal');
+            showToast('个人资料更新成功！');
+        }
+        
+        // 编辑单项信息
+        function editInfo(type) {
+            currentEditType = type;
+            const modal = document.getElementById('editInfoModal');
+            const title = document.getElementById('editInfoTitle');
+            const label = document.getElementById('editInfoLabel');
+            const input = document.getElementById('editInfoValue');
+            
+            switch(type) {
+                case 'name':
+                    title.textContent = '编辑姓名';
+                    label.textContent = '姓名';
+                    input.value = document.getElementById('infoName').textContent;
+                    break;
+                case 'gender':
+                    title.textContent = '编辑性别';
+                    label.textContent = '性别';
+                    input.value = document.getElementById('infoGender').textContent;
+                    break;
+                case 'age':
+                    title.textContent = '编辑年龄';
+                    label.textContent = '年龄';
+                    input.value = document.getElementById('infoAge').textContent.replace('岁', '');
+                    break;
+                case 'phone':
+                    title.textContent = '编辑手机号码';
+                    label.textContent = '手机号码';
+                    input.value = document.getElementById('infoPhone').textContent.replace(/[^\d]/g, '');
+                    break;
+                case 'email':
+                    title.textContent = '编辑电子邮箱';
+                    label.textContent = '电子邮箱';
+                    input.value = document.getElementById('infoEmail').textContent;
+                    break;
+            }
+            
+            modal.classList.add('active');
+        }
+        
+        // 保存单项信息
+        function saveInfo() {
+            const value = document.getElementById('editInfoValue').value;
+            
+            switch(currentEditType) {
+                case 'name':
+                    document.getElementById('userName').textContent = value;
+                    document.getElementById('infoName').textContent = value;
+                    break;
+                case 'gender':
+                    document.getElementById('infoGender').textContent = value;
+                    break;
+                case 'age':
+                    document.getElementById('infoAge').textContent = value + '岁';
+                    break;
+                case 'phone':
+                    document.getElementById('infoPhone').textContent = value.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2');
+                    break;
+                case 'email':
+                    document.getElementById('infoEmail').textContent = value;
+                    break;
+            }
+            
+            closeModal('editInfoModal');
+            showToast('信息更新成功！');
+        }
+        
+        // 切换设备连接状态
+        function toggleDeviceConnection(deviceName, button) {
+            const deviceItem = button.closest('.device-item');
+            const statusElement = deviceItem.querySelector('.device-status');
+            const iconElement = statusElement.querySelector('i');
+            
+            if (statusElement.classList.contains('status-connected')) {
+                statusElement.classList.remove('status-connected');
+                statusElement.classList.add('status-disconnected');
+                statusElement.innerHTML = '<i class="fas fa-circle"></i> 未连接';
+                button.innerHTML = '<i class="fas fa-link"></i>';
+                button.title = '连接设备';
+                showToast(`${deviceName}已断开连接`);
+            } else {
+                statusElement.classList.remove('status-disconnected');
+                statusElement.classList.add('status-connected');
+                statusElement.innerHTML = '<i class="fas fa-circle"></i> 已连接';
+                button.innerHTML = '<i class="fas fa-unlink"></i>';
+                button.title = '断开连接';
+                showToast(`${deviceName}已连接`);
+            }
+        }
+        
+        // 设备设置
+        function deviceSettings(deviceName) {
+            showToast(`打开${deviceName}设置`);
+        }
+        
+        // 快捷功能 - 打开健康报告
+        function openHealthReport() {
+            document.getElementById('healthReportModal').classList.add('active');
+        }
+        
+        // 导出健康报告
+        function exportHealthReport() {
+            showToast('健康报告PDF导出中...');
+            setTimeout(() => {
+                showToast('健康报告已导出为PDF文件');
+            }, 1500);
+        }
+        
+        // 快捷功能 - 打开预约挂号
+        function openAppointment() {
+            document.getElementById('appointmentModal').classList.add('active');
+        }
+        
+        // 提交预约
+        function submitAppointment() {
+            showToast('预约提交成功！');
+            setTimeout(() => {
+                closeModal('appointmentModal');
+            }, 1500);
+        }
+        
+        // 快捷功能 - 打开用药提醒
+        function openMedicationReminder() {
+            document.getElementById('medicationModal').classList.add('active');
+        }
+        
+        // 打开添加用药提醒模态框
+        function openAddMedicationModal() {
+            showToast('打开添加用药提醒表单');
+        }
+        
+        // 编辑用药提醒
+        function editMedication(id) {
+            showToast(`编辑用药提醒 #${id}`);
+        }
+        
+        // 删除用药提醒
+        function deleteMedication(id) {
+            if (confirm('确定要删除这条用药提醒吗？')) {
+                showToast(`用药提醒 #${id} 已删除`);
+            }
+        }
+        
+        // 快捷功能 - 打开家人管理
+        function openFamilyManagement() {
+            document.getElementById('familyModal').classList.add('active');
+        }
+        
+        // 查看家人健康档案
+        function viewFamilyHealthRecord(name) {
+            showToast(`查看 ${name} 的健康档案`);
+        }
+        
+        // 编辑家人信息
+        function editFamilyMember(name) {
+            showToast(`编辑 ${name} 的信息`);
+        }
+        
+        // 打开添加家人模态框
+        function openAddFamilyMemberModal() {
+            showToast('打开添加家人表单');
+        }
+        
+        // 快捷功能 - 打开系统设置
+        function openSystemSettings() {
+            document.getElementById('settingsModal').classList.add('active');
+        }
+        
+        // 切换设置标签页
+        function switchSettingsTab(tabId) {
+            // 移除所有标签的活动状态
+            document.querySelectorAll('.settings-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // 隐藏所有内容
+            document.querySelectorAll('.settings-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // 激活当前标签和内容
+            document.querySelector(`.settings-tab[onclick="switchSettingsTab('${tabId}')"]`).classList.add('active');
+            document.getElementById(`${tabId}-settings`).classList.add('active');
+        }
+        
+        // 打开隐私政策
+        function openPrivacyPolicy() {
+            showToast('打开隐私政策');
+        }
+        
+        // 打开用户协议
+        function openUserAgreement() {
+            showToast('打开用户协议');
+        }
+        
+        // 打开意见反馈
+        function openFeedback() {
+            showToast('打开意见反馈表单');
+        }
+        
+        // 快捷功能 - 打开帮助中心
+        function openHelpCenter() {
+            document.getElementById('helpModal').classList.add('active');
+        }
+        
+        // 显示常见问题答案
+        function showFAQ(value) {
+            const answerDiv = document.getElementById('faq-answer');
+            if (!value) {
+                answerDiv.style.display = 'none';
+                return;
+            }
+            
+            let answer = '';
+            switch(value) {
+                case '1':
+                    answer = '<strong>如何绑定医疗设备？</strong><br>1. 在"我的设备"区域点击设备<br>2. 选择"连接设备"<br>3. 按照屏幕提示完成配对';
+                    break;
+                case '2':
+                    answer = '<strong>如何导出健康报告？</strong><br>1. 点击"健康报告"快捷功能<br>2. 在报告页面点击"导出PDF"按钮<br>3. 选择保存位置';
+                    break;
+                case '3':
+                    answer = '<strong>如何添加家人？</strong><br>1. 点击"家人管理"快捷功能<br>2. 点击"添加家人"按钮<br>3. 填写家人信息并完成绑定';
+                    break;
+                case '4':
+                    answer = '<strong>忘记密码怎么办？</strong><br>1. 在登录页面点击"忘记密码"<br>2. 输入注册手机号<br>3. 按照短信提示重置密码';
+                    break;
+            }
+            
+            answerDiv.innerHTML = answer;
+            answerDiv.style.display = 'block';
+        }
+        
+        // 页面加载时初始化数据
+        document.addEventListener('DOMContentLoaded', () => {
+            // 加载头像
+            const savedAvatar = localStorage.getItem('userAvatar');
+            if (savedAvatar) {
+                document.getElementById('userAvatar').src = savedAvatar;
+            }
+            
+            // 加载用户信息
+            const savedUserInfo = localStorage.getItem('userInfo');
+            if (savedUserInfo) {
+                const userInfo = JSON.parse(savedUserInfo);
+                document.getElementById('userName').textContent = userInfo.name;
+                document.getElementById('infoName').textContent = userInfo.name;
+                document.getElementById('infoGender').textContent = userInfo.gender;
+                document.getElementById('infoAge').textContent = userInfo.age + '岁';
+                document.getElementById('infoPhone').textContent = userInfo.phone.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2');
+                document.getElementById('infoEmail').textContent = userInfo.email;
+                
+                // 填充编辑表单
+                document.getElementById('editName').value = userInfo.name;
+                document.getElementById('editGender').value = userInfo.gender;
+                document.getElementById('editAge').value = userInfo.age;
+                document.getElementById('editPhone').value = userInfo.phone;
+                document.getElementById('editEmail').value = userInfo.email;
+            }
+        });
+    </script>
+</body>
+</html>

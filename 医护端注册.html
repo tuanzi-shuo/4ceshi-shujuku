@@ -1,0 +1,73 @@
+<!-- 文件4：医护端注册.html（保持原主题，图标与登录端一致：fa-user-md） -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>医护端注册 - 元生智护系统</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+    .register-box { background: rgba(255,255,255,0.95); padding: 40px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); width: 100%; max-width: 450px; position: relative; }
+    .back-btn { position: absolute; top: 20px; left: 20px; color: #667eea; font-size: 20px; text-decoration: none; }
+    h2 { text-align: center; color: #333; margin-bottom: 30px; font-size: 28px; }
+    .input-group { position: relative; margin-bottom: 25px; }
+    .input-group i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #999; font-size: 18px; }
+    .input-group input { width: 100%; padding: 12px 20px 12px 45px; border: 2px solid #eee; border-radius: 10px; font-size: 16px; }
+    .btn-register { width: 100%; padding: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 10px; font-size: 18px; cursor: pointer; transition: all 0.3s; }
+    .btn-register:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102,126,234,0.4); }
+    .switch-link { text-align: center; margin-top: 20px; color: #666; font-size: 16px; }
+    .switch-link a { color: #667eea; text-decoration: none; font-weight: 500; transition: color 0.3s; }
+    .switch-link a:hover { color: #764ba2; text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="register-box">
+    <a class="back-btn" href="index.html"><i class="fas fa-arrow-left"></i></a>
+    <h2>医护端注册</h2>
+    <div class="input-group">
+      <i class="fas fa-user-md"></i>
+      <input type="text" id="reg-username" placeholder="设置医护账号">
+    </div>
+    <div class="input-group">
+      <i class="fas fa-lock"></i>
+      <input type="password" id="reg-password" placeholder="设置密码">
+    </div>
+    <div class="input-group">
+      <i class="fas fa-lock"></i>
+      <input type="password" id="reg-confirm" placeholder="确认密码">
+    </div>
+    <button class="btn-register" onclick="doRegister()">立即注册</button>
+    <div class="switch-link">
+      已有账号？<a href="医护端登录.html?role=medical">去登录</a>
+    </div>
+  </div>
+
+  <script>
+    function doRegister() {
+      const username = document.getElementById('reg-username').value.trim();
+      const password = document.getElementById('reg-password').value.trim();
+      const confirm = document.getElementById('reg-confirm').value.trim();
+      if (!username || !password || !confirm) { alert('请填写完整信息'); return; }
+      if (password !== confirm) { alert('两次密码不一致'); return; }
+      
+      // 关键修改：将硬编码地址 http://localhost:5000 改为相对路径 /api
+      fetch('/api/register', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ username, password, role: 'medical' })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          alert('注册成功');
+          window.location.href='医护端登录.html?role=medical';
+        } else {
+          alert(data.message || '注册失败');
+        }
+      })
+      .catch(err => alert('网络错误：' + err));
+    }
+  </script>
+</body>
+</html>

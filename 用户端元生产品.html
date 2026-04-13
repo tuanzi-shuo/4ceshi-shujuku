@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>元生智护系统 - 元生产品</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft Yahei', sans-serif;
+            color: #34495e;
+        }
+
+        body {
+            background-color: #f0f8ff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* 导航栏样式 */
+        .navbar {
+            background-color: #ffffff;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            color: #2c3e50;
+            font-size: 1.8rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .navbar-brand:hover {
+            color: #3498db;
+            transform: scale(1.05);
+        }
+
+        /* 优化后的导航链接 */
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+            align-items: center;
+        }
+        .nav-link {
+            color: #666;
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+        .nav-link.active,
+        .nav-link:hover {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+        }
+
+        /* 主内容区样式 */
+        .main-content {
+            flex: 1;
+            padding: 3rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .section-title {
+            color: #2c3e50;
+            font-size: 2.2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            position: relative;
+            padding-bottom: 1.5rem;
+        }
+        .section-title::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: #3498db;
+        }
+
+        .health-knowledge {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        .knowledge-card {
+            background: #f9fafb;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .knowledge-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+            background: white;
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            background: #3498db;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            color: #2c3e50;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .card-content {
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+        }
+
+        .read-more {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            padding-right: 1.5rem;
+        }
+        .read-more::after {
+            content: '>';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+        .read-more:hover::after {
+            transform: translateX(5px);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+                flex-wrap: wrap;
+            }
+            .nav-links {
+                flex-direction: column;
+                gap: 1.5rem;
+                margin-top: 1rem;
+            }
+            .section-title {
+                font-size: 1.8rem;
+            }
+        }
+        /* 新增产品模块专用样式 */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2.5rem;
+            margin-top: 3rem;
+        }
+
+        .product-card {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-align: center;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(52, 152, 219, 0.15);
+        }
+
+        .product-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .product-title {
+            color: #2c3e50;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .product-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            justify-content: center;
+        }
+
+        .feature-item {
+            background: #f8f9fa;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            flex: 1 1 calc(33% - 2rem);
+            text-align: left;
+        }
+
+        @media (max-width: 768px) {
+            .product-features {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .feature-item {
+                flex: 1 1 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+	<nav class="navbar">
+		<div class="navbar-brand">
+			<span>用户端</span> | 元生智护系统 <!-- 注意：此处原“active”若为品牌样式可保留，不影响导航下划线 -->
+		</div>
+		<ul class="nav-links">
+			<li><a href="用户端首页.html" class="nav-link">首页</a></li> <!-- 移除首页的active -->
+			<li><a href="用户端元生产品.html" class="nav-link active">元生产品</a></li> <!-- 给元生产品添加active -->
+			<li><a href="用户端附近医疗机构.html" class="nav-link">附近医疗机构</a></li>
+			<li><a href="用户端社区支持.html" class="nav-link">社区支持</a></li>
+			<li><a href="用户端个人账户.html" class="nav-link">个人账户</a></li>
+		</ul>
+	</nav>
+
+    <!-- 主内容区 -->
+    <div class="main-content">
+        <section class="section-title">智能护理产品系列</section>
+        
+        <div class="product-grid">
+            <!-- 体温检测产品 -->
+            <div class="product-card">
+                <div class="product-icon">🌡️</div>
+                <h2 class="product-title">智能体温监测系统</h2>
+                <div class="product-features">
+                    <div class="feature-item">
+                        <h4>实时监测</h4>
+                        <p>每5分钟自动测量，数据云端同步</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>异常预警</h4>
+                        <p>体温异常自动推送警报至监护人</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>医疗级精度</h4>
+                        <p>±0.1℃误差范围，通过CE认证</p>
+                    </div>
+                </div>
+                <a href="#" class="read-more">查看详情</a>
+            </div>
+
+            <!-- 护腰带产品 -->
+            <div class="product-card">
+                <div class="product-icon">🩺</div>
+                <h2 class="product-title">医用护腰支撑系统</h2>
+                <div class="product-features">
+                    <div class="feature-item">
+                        <h4>智能调节</h4>
+                        <p>根据体态自动调节支撑力度</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>压力分散</h4>
+                        <p>三区独立气囊设计，缓解腰椎压力</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>健康数据</h4>
+                        <p>记录每日使用数据，生成健康报告</p>
+                    </div>
+                </div>
+                <a href="#" class="read-more">立即体验</a>
+            </div>
+
+            <!-- 翻身床产品 -->
+            <div class="product-card">
+                <div class="product-icon">🛏️</div>
+                <h2 class="product-title">智能护理翻身床</h2>
+                <div class="product-features">
+                    <div class="feature-item">
+                        <h4>自动翻身</h4>
+                        <p>2小时自动翻身，预防褥疮</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>体位记忆</h4>
+                        <p>自定义10种舒适体位模式</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>安全监测</h4>
+                        <p>离床警报+心率呼吸监测</p>
+                    </div>
+                </div>
+                <a href="#" class="read-more">预约演示</a>
+            </div>
+
+            <!-- 健康监控系统 -->
+            <div class="product-card">
+                <div class="product-icon">📊</div>
+                <h2 class="product-title">综合健康监护平台</h2>
+                <div class="product-features">
+                    <div class="feature-item">
+                        <h4>多参数监测</h4>
+                        <p>血压/血糖/血氧/心率一体化监测</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>AI预警</h4>
+                        <p>异常数据自动分析并生成处理建议</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>家属端同步</h4>
+                        <p>数据实时共享至亲属手机端</p>
+                    </div>
+                </div>
+                <a href="#" class="read-more">系统试用</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部版权 -->
+    <footer style="text-align:center; padding:1rem; background:#eee; margin-top:auto;">
+        <p>© 2026 元生智护系统 版权所有 | 医疗设备认证编号：国械注准20253140001</p>
+    </footer>
+</body>
+</html>

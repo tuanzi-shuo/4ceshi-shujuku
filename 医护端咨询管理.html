@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>元生智护系统 - 咨询管理</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Microsoft YaHei', 'Segoe UI', sans-serif; }
+        body { background-color: #f0f4f8; color: #333; line-height: 1.6; }
+        
+        .navbar { background: linear-gradient(135deg, #1a6dcc 0%, #0d4d9e 100%); color: white; padding: 0 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+        .nav-container { display: flex; justify-content: space-between; align-items: center; max-width: 1600px; margin: 0 auto; height: 70px; }
+        .logo { display: flex; align-items: center; font-size: 1.5rem; font-weight: bold; }
+        .logo-icon { width: 40px; height: 40px; background: white; border-radius: 50%; margin-right: 10px; display: flex; align-items: center; justify-content: center; color: #1a6dcc; font-weight: bold; }
+        .nav-menu { display: flex; list-style: none; }
+        .nav-item { margin: 0 15px; }
+        .nav-link { color: white; text-decoration: none; font-weight: 500; padding: 8px 12px; border-radius: 4px; transition: background 0.3s; }
+        .nav-link:hover, .nav-link.active { background: rgba(255,255,255,0.2); }
+        .user-info { display: flex; align-items: center; }
+        .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; margin-right: 10px; color: #1a6dcc; font-weight: bold; }
+
+        .main-container { max-width: 1600px; margin: 0 auto; padding: 20px; display: grid; grid-template-columns: 380px 1fr; gap: 20px; }
+        
+        .left-panel { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 3px 15px rgba(0,0,0,0.08); height: fit-content; }
+        .panel-section { margin-bottom: 25px; }
+        .panel-title { font-size: 1.1rem; color: #1a6dcc; margin-bottom: 50px; padding-bottom: 8px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        
+        .consultation-control { text-align: center; padding: 20px; background: #f8fafc; border-radius: 8px; margin-bottom: 20px; }
+        .status-indicator { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.9rem; margin-bottom: 15px; font-weight: 500; }
+        .status-offline { background: #f0f0f0; color: #666; }
+        .status-online { background: #e6ffe6; color: #2db92d; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 0.8; } 50% { opacity: 1; } 100% { opacity: 0.8; } }
+        .btn-consult-toggle { padding: 12px 24px; font-size: 1.1rem; width: 100%; border: none; border-radius: 6px; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 500; }
+        .btn-consult-start { background: linear-gradient(135deg, #2db92d 0%, #228b22 100%); color: white; box-shadow: 0 4px 10px rgba(45,185,45,0.3); }
+        .btn-consult-end { background: linear-gradient(135deg, #ff4d4f 0%, #e04345 100%); color: white; box-shadow: 0 4px 10px rgba(255,77,79,0.3); }
+
+        .filter-section { display: flex; gap: 10px; margin-bottom: 15px; align-items: center; }
+        .search-box { flex: 1; position: relative; }
+        .search-box input { width: 100%; padding: 8px 12px 8px 35px; border: 1px solid #ddd; border-radius: 20px; font-size: 0.9rem; transition: all 0.3s; }
+        .search-box input:focus { border-color: #1a6dcc; box-shadow: 0 0 0 2px rgba(26,109,204,0.2); outline: none; }
+        .search-box i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #999; }
+        .time-filter { display: flex; gap: 5px; align-items: center; }
+        .time-filter select { padding: 8px; border: 1px solid #ddd; border-radius: 20px; font-size: 0.9rem; }
+        .refresh-btn { background: #f0f5ff; border: 1px solid #1a6dcc; color: #1a6dcc; border-radius: 20px; padding: 0 15px; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; }
+        .refresh-btn:hover { background: #1a6dcc; color: white; }
+
+        .message-list { 
+            max-height: 250px; 
+            height: 250px; 
+            overflow-y: auto; 
+            border: 1px solid #eee; 
+            border-radius: 8px; 
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05); 
+        }
+        .message-item { padding: 12px; border-bottom: 1px solid #f0f0f0; cursor: pointer; transition: background 0.2s; position: relative; }
+        .message-item:last-child { border-bottom: none; }
+        .message-item:hover, .message-item.active { background: #f0f5ff; }
+        .message-header { display: flex; justify-content: space-between; margin-bottom: 5px; align-items: center; }
+        .message-sender { font-weight: 500; display: flex; align-items: center; gap: 5px; }
+        .message-time { color: #999; font-size: 0.8rem; }
+        .message-preview { color: #666; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 5px; }
+        .message-meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: #999; }
+        .unread-badge { background: #ff4d4f; color: white; border-radius: 10px; padding: 2px 6px; font-size: 0.7rem; }
+        .vip-badge { background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%); color: #7a5c00; border-radius: 10px; padding: 2px 6px; font-size: 0.7rem; font-weight: 500; }
+        .svip-badge { background: linear-gradient(135deg, #a64dff 0%, #7a2cbf 100%); color: white; border-radius: 10px; padding: 2px 6px; font-size: 0.7rem; font-weight: 500; }
+        .countdown-icon { color: #ff4d4f; margin-left: 5px; font-size: 0.7rem; }
+        .message-actions { position: absolute; top: 12px; right: 12px; display: none; gap: 5px; }
+        .message-item:hover .message-actions { display: flex; }
+        .action-btn { padding: 3px 6px; border: none; border-radius: 4px; font-size: 0.7rem; cursor: pointer; background: #f0f0f0; color: #666; transition: all 0.2s; }
+        .action-btn:hover { background: #e0e0e0; }
+
+        .right-panel { display: grid; grid-template-rows: auto 1fr; gap: 10px; }
+        .page-header { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 3px 15px rgba(0,0,0,0.08); display: flex; justify-content: space-between; align-items: center; }
+        .page-title { color: #1a6dcc; font-size: 1.8rem; display: flex; align-items: center; gap: 10px; }
+        .status-tag { padding: 4px 10px; border-radius: 20px; font-size: 0.9rem; background: #e6ffe6; color: #2db92d; font-weight: 500; }
+        .status-tag.offline { background: #f0f0f0; color: #666; }
+        .page-actions { display: flex; gap: 10px; }
+        .btn { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; transition: all 0.3s; display: flex; align-items: center; gap: 8px; }
+        .btn-primary { background: linear-gradient(135deg, #1a6dcc 0%, #0d4d9e 100%); color: white; box-shadow: 0 4px 10px rgba(26,109,204,0.3); }
+        .btn-primary:hover { background: linear-gradient(135deg, #0d4d9e 0%, #0a3a7a 100%); transform: translateY(-2px); }
+        .btn-outline { background: transparent; border: 1px solid #1a6dcc; color: #1a6dcc; }
+        .btn-outline:hover { background: #e6f2ff; }
+
+        .status-filter-boxes { display: flex; gap: 12px; margin-bottom: 20px; }
+        .item-box { display: inline-flex; flex-direction: column; align-items: center; justify-content: center; min-width: 100px; padding: 12px 16px; border: 1px solid #e0e0e0; border-radius: 8px; background: #fff; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .item-box:hover { border-color: #1a6dcc; box-shadow: 0 4px 8px rgba(26,109,204,0.1); transform: translateY(-2px); }
+        .item-box.active { border-color: #1a6dcc; background: #e6f2ff; box-shadow: 0 4px 8px rgba(26,109,204,0.15); }
+        .item-box .num { font-size: 1.2rem; font-weight: 600; margin-bottom: 4px; }
+        .item-box .text { font-size: 0.9rem; color: #333; text-align: center; }
+        .item-box.pending .num { color: #1a6dcc; }
+        .item-box.in-progress .num { color: #ff8c1a; }
+        .item-box.completed .num { color: #2db92d; }
+        .item-box.vip .num { color: #a64dff; }
+
+        .chat-container, .phone-consult-container, .video-consult-container { 
+            background: white; 
+            border-radius: 20px; 
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08); 
+            display: flex; 
+            flex-direction: column; 
+            height: 560px; 
+            margin-top: 0; 
+        }
+        .chat-header, .phone-header, .video-header { padding: 15px 20px; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; }
+        .chat-messages, .phone-messages, .video-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background: #f9fbfd; }
+        .message-bubble { max-width: 70%; padding: 12px 15px; border-radius: 18px; position: relative; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .message-doctor { align-self: flex-end; background: linear-gradient(135deg, #1a6dcc 0%, #0d4d9e 100%); color: white; border-bottom-right-radius: 4px; }
+        .message-patient { align-self: flex-start; background: white; color: #333; border-bottom-left-radius: 4px; border: 1px solid #eee; }
+        .message-time { font-size: 0.7rem; margin-top: 5px; text-align: right; }
+        .message-doctor .message-time { color: rgba(255,255,255,0.7); }
+        .message-patient .message-time { color: #999; }
+        .chat-input, .phone-input, .video-input { padding: 15px; border-top: 1px solid #eee; display: flex; gap: 10px; background: white; }
+        .chat-input input, .phone-input input, .video-input input { flex: 1; padding: 10px 15px; border: 1px solid #ddd; border-radius: 20px; outline: none; transition: all 0.3s; }
+        .chat-input input:focus, .phone-input input:focus, .video-input input:focus { border-color: #1a6dcc; box-shadow: 0 0 0 2px rgba(26,109,204,0.2); }
+        .chat-input button, .phone-input button, .video-input button { padding: 10px 20px; background: linear-gradient(135deg, #1a6dcc 0%, #0d4d9e 100%); color: white; border: none; border-radius: 20px; cursor: pointer; transition: all 0.3s; }
+        .chat-input button:hover, .phone-input button:hover, .video-input button:hover { background: linear-gradient(135deg, #0d4d9e 0%, #0a3a7a 100%); }
+        #endConsultBtn { padding: 10px 15px; font-size: 0.9rem; }
+        .countdown-timer { color: #ff4d4f; font-weight: 500; }
+        
+        .phone-controls { display: flex; gap: 10px; justify-content: center; margin-top: 10px; }
+        .phone-btn { width: 50px; height: 50px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; }
+        .phone-call { background: #2db92d; color: white; }
+        .phone-hangup { background: #ff4d4f; color: white; }
+        .phone-mute { background: #f0f0f0; color: #666; }
+        
+        .video-container { display: flex; flex-direction: column; gap: 10px; }
+        .video-local, .video-remote { width: 100%; height: 200px; background: #000; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; }
+        .video-remote { height: 300px; }
+        .video-permission { text-align: center; padding: 20px; }
+        .video-permission button { margin-top: 10px; }
+
+        .footer { background: #2c3e50; color: #ecf0f1; padding: 40px 0 20px; margin-top: 500px; }
+        .footer-content { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px,1fr)); gap: 30px; padding: 0 20px; }
+        .footer-section h3 { font-size: 1.2rem; margin-bottom: 20px; color: #3498db; position: relative; padding-bottom: 10px; }
+        .footer-section h3::after { content: ''; position: absolute; bottom: 0; left: 0; width: 50px; height: 2px; background: #3498db; }
+        .footer-links { list-style: none; }
+        .footer-links li { margin-bottom: 10px; }
+        .footer-links a { color: #bdc3c7; text-decoration: none; transition: color 0.3s; display: flex; align-items: center; gap: 8px; }
+        .footer-links a:hover { color: #3498db; }
+        .contact-info { color: #bdc3c7; line-height: 1.8; }
+        .contact-info p { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+        .copyright { text-align: center; padding-top: 20px; margin-top: 30px; border-top: 1px solid #34495e; color: #7f8c8d; font-size: 0.9rem; }
+
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 2000; }
+        .modal-content { background: white; padding: 30px; border-radius: 10px; width: 400px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 500; color: #333; }
+        .form-group select, .form-group input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        .time-select-group { display: flex; gap: 10px; align-items: center; }
+        .time-select-group select { flex: 1; }
+        .modal-buttons { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+        .error-text { color: #ff4d4f; }
+        
+        /* 优化后的咨询方式选择样式 */
+        .consult-type-options {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        .consult-type-option {
+            flex: 1;
+            position: relative;
+        }
+        .consult-type-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .consult-type-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        .consult-type-label i {
+            font-size: 24px;
+            margin-bottom: 8px;
+            color: #1a6dcc;
+        }
+        .consult-type-label span {
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+        }
+        .consult-type-option input[type="radio"]:checked + .consult-type-label {
+            border-color: #1a6dcc;
+            background: #e6f2ff;
+            box-shadow: 0 2px 8px rgba(26, 109, 204, 0.1);
+        }
+        .consult-type-option input[type="radio"]:checked + .consult-type-label i {
+            color: #0d4d9e;
+        }
+        
+        /* 通话请求模态框 */
+        .call-request-modal {
+            text-align: center;
+        }
+        .call-request-modal .patient-info {
+            font-size: 18px;
+            margin: 20px 0;
+            color: #333;
+        }
+        .call-request-modal .call-type {
+            font-size: 16px;
+            color: #1a6dcc;
+            margin-bottom: 30px;
+        }
+        .call-request-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        .call-accept { background: #2db92d; color: white; }
+        .call-reject { background: #ff4d4f; color: white; }
+        
+        #errorModal.modal-content p { color: #ff4d4f; }
+        #successModal.modal-content p { color: #2db92d; }
+        .empty-state { text-align: center; padding: 20px; color: #999; }
+        .empty-state i { font-size: 2rem; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-icon">元</div>
+                <span>元生智护系统（医护端）</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="医护端首页.html" class="nav-link">首页</a></li>
+                <li class="nav-item"><a href="医护端咨询管理.html" class="nav-link active">咨询管理</a></li>
+                <li class="nav-item"><a href="医护端知识库管理.html" class="nav-link">知识库管理</a></li>
+                <li class="nav-item"><a href="医护端档案管理.html" class="nav-link">档案管理</a></li>
+                <li class="nav-item"><a href="医护端个人中心.html" class="nav-link">个人中心</a></li>
+            </ul>
+            <div class="user-info">
+                <div class="user-avatar">张</div>
+                <div>
+                    <div>张医生（SVIP）</div>
+                    <div style="font-size: 0.8rem;">心内科 | 主任医师</div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <div class="left-panel">
+            <div class="panel-section">
+                <h3 class="panel-title">接诊控制</h3>
+                <div class="consultation-control">
+                    <div class="status-indicator status-offline" id="statusIndicator">离线</div>
+                    <button class="btn-consult-toggle btn-consult-start" id="consultToggleBtn" onclick="showStartConsultModal()">
+                        <i class="fas fa-play"></i> 开始接诊
+                    </button>
+                </div>
+            </div>
+            <div class="panel-section" id="consultListSection" style="display: none;">
+                <div class="panel-title">
+                    <span>咨询列表</span>
+                </div>
+                <div class="filter-section">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="搜索患者..." oninput="filterConsultations()">
+                    </div>
+                    <div class="time-filter">
+                        <select id="filterHour" onchange="filterConsultations()">
+                            <option value="">小时</option>
+                        </select>
+                        <select id="filterMinute" onchange="filterConsultations()">
+                            <option value="">分钟</option>
+                        </select>
+                    </div>
+                    <button class="refresh-btn" onclick="refreshConsultations()">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+                <div class="message-list" id="messageList"></div>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="panel-section" id="statusFilterBoxes" style="display: none;">
+                <div class="status-filter-boxes">
+                    <div class="item-box pending" data-status="pending" onclick="filterByStatus('pending')">
+                        <span class="num">0</span>
+                        <span class="text">待处理咨询</span>
+                    </div>
+                    <div class="item-box in-progress" data-status="in-progress" onclick="filterByStatus('in-progress')">
+                        <span class="num">0</span>
+                        <span class="text">进行中咨询</span>
+                    </div>
+                    <div class="item-box completed" data-status="completed" onclick="filterByStatus('completed')">
+                        <span class="num">0</span>
+                        <span class="text">今日已完成</span>
+                    </div>
+                    <div class="item-box vip active" data-status="vip" onclick="filterByStatus('vip')">
+                        <span class="num">0</span>
+                        <span class="text">全部</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 图文咨询容器 -->
+            <div class="chat-container" id="chatContainer" style="display: none;">
+                <div class="chat-header">
+                    <h3 id="currentPatient">选择患者开始对话</h3>
+                </div>
+                <div class="chat-messages" id="chatMessages">
+                    <div class="empty-state">
+                        <i class="fas fa-comments"></i>
+                        <p>请从左侧选择患者开始对话</p>
+                    </div>
+                </div>
+                <div class="chat-input" id="chatInput" style="display: none;">
+                    <input type="text" id="messageInput" placeholder="输入回复内容..." onkeypress="sendMessageOnEnter(event)">
+                    <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+                    <button id="endConsultBtn" class="btn-outline" onclick="requestEndConsult()" style="display: none;" disabled>
+                        <i class="fas fa-times-circle"></i> <span id="endBtnText">申请结束本次问诊</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 电话咨询容器 -->
+            <div class="phone-consult-container" id="phoneContainer" style="display: none;">
+                <div class="phone-header">
+                    <h3 id="phoneCurrentPatient">选择患者进行电话咨询</h3>
+                    <span class="status-tag" id="phoneStatusTag">未连接</span>
+                </div>
+                <div class="phone-messages" id="phoneMessages">
+                    <div class="empty-state">
+                        <i class="fas fa-phone"></i>
+                        <p>请从左侧选择患者进行电话咨询</p>
+                    </div>
+                </div>
+                <div class="phone-input" id="phoneInput" style="display: none;">
+                    <input type="text" id="phoneNoteInput" placeholder="记录通话备注...">
+                    <button onclick="savePhoneNote()"><i class="fas fa-save"></i> 保存备注</button>
+                    <button id="endPhoneConsultBtn" class="btn-outline" onclick="endPhoneConsult()" style="display: none;">
+                        <i class="fas fa-phone-slash"></i> 结束通话
+                    </button>
+                </div>
+                <div class="phone-controls" id="phoneControls" style="display: none;">
+                    <button class="phone-btn phone-call" onclick="startPhoneCall()"><i class="fas fa-phone"></i></button>
+                    <button class="phone-btn phone-hangup" onclick="hangupPhoneCall()" style="display: none;"><i class="fas fa-phone-slash"></i></button>
+                    <button class="phone-btn phone-mute" onclick="togglePhoneMute()"><i class="fas fa-microphone"></i></button>
+                </div>
+            </div>
+            
+            <!-- 视频咨询容器 -->
+            <div class="video-consult-container" id="videoContainer" style="display: none;">
+                <div class="video-header">
+                    <h3 id="videoCurrentPatient">选择患者进行视频咨询</h3>
+                    <span class="status-tag" id="videoStatusTag">等待权限</span>
+                </div>
+                <div class="video-messages" id="videoMessages">
+                    <div class="video-permission" id="videoPermission">
+                        <p>视频咨询需要获取摄像头和麦克风权限</p>
+                        <button class="btn-primary" onclick="requestVideoPermission()">授权访问</button>
+                        <div id="permissionStatus" style="margin-top: 10px;"></div>
+                    </div>
+                    <div class="video-container" id="videoContainerInner" style="display: none;">
+                        <div class="video-remote" id="remoteVideo">远程画面</div>
+                        <div class="video-local" id="localVideo">本地画面</div>
+                        <div class="video-controls">
+                            <button class="btn-primary" id="startVideoBtn" onclick="startVideoCall()">开始视频</button>
+                            <button class="btn-outline" id="endVideoBtn" onclick="endVideoCall()" style="display: none;">结束视频</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="video-input" id="videoInput" style="display: none;">
+                    <input type="text" id="videoNoteInput" placeholder="记录视频咨询备注...">
+                    <button onclick="saveVideoNote()"><i class="fas fa-save"></i> 保存备注</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 开始接诊模态框 -->
+    <div id="startConsultModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h3 class="modal-title">设置接诊信息</h3>
+            <div class="form-group">
+                <label>咨询方式</label>
+                <div class="consult-type-options">
+                    <div class="consult-type-option">
+                        <input type="radio" name="consultType" value="graphic" id="consultTypeGraphic" checked>
+                        <label for="consultTypeGraphic" class="consult-type-label">
+                            <i class="fas fa-comments"></i>
+                            <span>图文咨询</span>
+                        </label>
+                    </div>
+                    <div class="consult-type-option">
+                        <input type="radio" name="consultType" value="phone" id="consultTypePhone">
+                        <label for="consultTypePhone" class="consult-type-label">
+                            <i class="fas fa-phone"></i>
+                            <span>电话咨询</span>
+                        </label>
+                    </div>
+                    <div class="consult-type-option">
+                        <input type="radio" name="consultType" value="video" id="consultTypeVideo">
+                        <label for="consultTypeVideo" class="consult-type-label">
+                            <i class="fas fa-video"></i>
+                            <span>视频咨询</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>开始时间</label>
+                <div class="time-select-group">
+                    <select id="startHour"></select>
+                    <span>:</span>
+                    <select id="startMinute"></select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>结束时间</label>
+                <div class="time-select-group">
+                    <select id="endHour"></select>
+                    <span>:</span>
+                    <select id="endMinute"></select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>预计接诊数量</label>
+                <input type="number" id="expectedCount" min="1" value="5">
+            </div>
+            <div class="modal-buttons">
+                <button class="btn-outline" onclick="closeStartConsultModal()">取消</button>
+                <button class="btn-primary" onclick="confirmStartConsult()">确认</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 通话请求模态框 -->
+    <div id="callRequestModal" class="modal" style="display: none;">
+        <div class="modal-content call-request-modal">
+            <h3 class="modal-title">通话请求</h3>
+            <div class="patient-info" id="callPatientName"></div>
+            <div class="call-type" id="callTypeInfo"></div>
+            <p>等待患者接受邀请...</p>
+            <div class="call-request-buttons">
+                <button class="btn call-accept" onclick="acceptCall()">接听</button>
+                <button class="btn call-reject" onclick="rejectCall()">拒绝</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 错误提示模态框 -->
+    <div id="errorModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h3 class="modal-title">操作失败</h3>
+            <p id="errorMsg" class="error-text"></p>
+            <div class="modal-buttons">
+                <button class="btn-outline" onclick="closeErrorModal()">确认</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 成功提示模态框 -->
+    <div id="successModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h3 class="modal-title">操作成功</h3>
+            <p id="successMsg"></p>
+            <div class="modal-buttons">
+                <button class="btn-outline" onclick="closeSuccessModal()">确认</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>关于我们</h3>
+                <p>元生智护系统致力于为医护人员提供专业的医疗咨询和健康知识管理平台，通过智能化工具提升医疗服务质量与效率，助力构建和谐医患关系。</p>
+            </div>
+            <div class="footer-section">
+                <h3>快速链接</h3>
+                <ul class="footer-links">
+                    <li><a href="#"><i class="fas fa-book"></i> 使用指南</a></li>
+                    <li><a href="#"><i class="fas fa-question-circle"></i> 常见问题</a></li>
+                    <li><a href="#"><i class="fas fa-bullhorn"></i> 系统公告</a></li>
+                    <li><a href="#"><i class="fas fa-shield-alt"></i> 隐私政策</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>联系我们</h3>
+                <div class="contact-info">
+                    <p><i class="fas fa-envelope"></i> 技术支持: support@yuansheng.com</p>
+                    <p><i class="fas fa-phone"></i> 客服电话: 400-123-4567</p>
+                    <p><i class="fas fa-clock"></i> 工作时间: 工作日 9:00-18:00</p>
+                    <p><i class="fas fa-map-marker-alt"></i> 地址: 北京市海淀区科技园区88号</p>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>© 2026 元生智护系统 医护端. 版权所有. 京ICP备12345678号</p>
+        </div>
+    </footer>
+
+    <script>
+        let isConsulting = false;
+        let currentStatusFilter = 'vip';
+        let selectedUserId = null;
+        let endTimers = {};
+        let expectedConsultCount = 5;
+        let allPatients = [
+            { id: 1, name: "王先生", memberType: "", phone: "138****1234", lastTime: "10:23", unread: 0, status: "pending", lastMsg: "", consultType: "graphic" },
+            { id: 2, name: "刘女士", memberType: "vip", phone: "139****5678", lastTime: "今天", unread: 0, status: "pending", lastMsg: "", consultType: "graphic" },
+            { id: 3, name: "张先生", memberType: "", phone: "137****9012", lastTime: "11:02", unread: 0, status: "pending", lastMsg: "", consultType: "graphic" },
+            { id: 4, name: "李女士", memberType: "vip", phone: "136****3456", lastTime: "09:45", unread: 0, status: "pending", lastMsg: "", consultType: "graphic" },
+            { id: 5, name: "赵先生", memberType: "svip", phone: "135****7890", lastTime: "14:30", unread: 0, status: "pending", lastMsg: "", consultType: "phone" },
+            { id: 6, name: "孙女士", memberType: "svip", phone: "134****2345", lastTime: "15:10", unread: 0, status: "pending", lastMsg: "", consultType: "phone" },
+            { id: 7, name: "周先生", memberType: "", phone: "133****6789", lastTime: "16:20", unread: 0, status: "pending", lastMsg: "", consultType: "video" },
+            { id: 8, name: "吴女士", memberType: "vip", phone: "132****0123", lastTime: "17:05", unread: 0, status: "pending", lastMsg: "", consultType: "video" },
+            { id: 9, name: "郑先生", memberType: "svip", phone: "131****4567", lastTime: "18:40", unread: 0, status: "pending", lastMsg: "", consultType: "video" },
+            { id: 10, name: "王女士", memberType: "", phone: "130****8901", lastTime: "19:15", unread: 0, status: "pending", lastMsg: "", consultType: "graphic" }
+        ];
+        let filteredPatients = [...allPatients];
+        let consultStartTime = "";
+        let consultEndTime = "";
+        let currentConsultType = "graphic";
+        let videoStream = null;
+        let isPhoneMuted = false;
+        let isPhoneCalling = false;
+        let currentActiveCall = null; // 当前活跃的电话/视频通话
+        let pendingCallRequest = null; // 待处理的呼叫请求
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateStatusCounts();
+            initTimeFilters();
+        });
+
+        function initTimeFilters() {
+            const hourSelects = [document.getElementById('startHour'), document.getElementById('endHour'), document.getElementById('filterHour')];
+            const minuteSelects = [document.getElementById('startMinute'), document.getElementById('endMinute'), document.getElementById('filterMinute')];
+            
+            hourSelects.forEach(select => {
+                for (let i = 0; i < 24; i++) {
+                    const option = document.createElement('option');
+                    option.value = String(i).padStart(2, '0');
+                    option.textContent = String(i).padStart(2, '0');
+                    select.appendChild(option);
+                }
+            });
+            
+            minuteSelects.forEach(select => {
+                for (let i = 0; i < 60; i++) {
+                    const option = document.createElement('option');
+                    option.value = String(i).padStart(2, '0');
+                    option.textContent = String(i).padStart(2, '0');
+                    select.appendChild(option);
+                }
+            });
+        }
+
+        function showStartConsultModal() {
+            const now = new Date();
+            let startMinute = now.getMinutes() + 1;
+            let startHour = now.getHours();
+            if (startMinute >= 60) {
+                startHour = (startHour + 1) % 24;
+                startMinute = 0;
+            }
+            const endHour = (startHour + 1) % 24;
+            const startHourStr = String(startHour).padStart(2, '0');
+            const startMinuteStr = String(startMinute).padStart(2, '0');
+            const endHourStr = String(endHour).padStart(2, '0');
+            
+            document.getElementById('startHour').value = startHourStr;
+            document.getElementById('startMinute').value = startMinuteStr;
+            document.getElementById('endHour').value = endHourStr;
+            document.getElementById('endMinute').value = startMinuteStr;
+            document.getElementById('startConsultModal').style.display = 'flex';
+        }
+
+        function closeStartConsultModal() {
+            document.getElementById('startConsultModal').style.display = 'none';
+        }
+
+        async function confirmStartConsult() {
+            const startHour = document.getElementById('startHour').value;
+            const startMinute = document.getElementById('startMinute').value;
+            const endHour = document.getElementById('endHour').value;
+            const endMinute = document.getElementById('endMinute').value;
+            const count = parseInt(document.getElementById('expectedCount').value);
+            const consultType = document.querySelector('input[name="consultType"]:checked').value;
+            const errorMsgEl = document.getElementById('errorMsg');
+
+            if (!startHour || !startMinute || !endHour || !endMinute) {
+                errorMsgEl.textContent = '请选择完整的开始和结束时间';
+                document.getElementById('errorModal').style.display = 'flex';
+                return;
+            }
+            
+            const start = new Date(0, 0, 0, startHour, startMinute);
+            const end = new Date(0, 0, 0, endHour, endMinute);
+            if (start >= end) {
+                errorMsgEl.textContent = '结束时间必须晚于开始时间';
+                document.getElementById('errorModal').style.display = 'flex';
+                return;
+            }
+            if (isNaN(count) || count < 1) {
+                errorMsgEl.textContent = '请输入有效的预计接诊数量';
+                document.getElementById('errorModal').style.display = 'flex';
+                return;
+            }
+            
+            if (consultType === 'video') {
+                try {
+                    videoStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                    document.getElementById('permissionStatus').innerHTML = '<span style="color:#2db92d">权限获取成功</span>';
+                } catch (err) {
+                    errorMsgEl.textContent = '无法获取摄像头/麦克风权限，无法开始视频咨询';
+                    document.getElementById('errorModal').style.display = 'flex';
+                    return;
+                }
+            }
+
+            consultStartTime = `${startHour}:${startMinute}`;
+            consultEndTime = `${endHour}:${endMinute}`;
+            expectedConsultCount = count;
+            currentConsultType = consultType;
+            isConsulting = true;
+            closeStartConsultModal();
+            updateConsultationUI(true);
+            updateStatusCounts();
+            filterByStatus('vip');
+            renderMessageList();
+        }
+
+        function updateConsultationUI(consulting) {
+            const indicator = document.getElementById('statusIndicator');
+            const toggleBtn = document.getElementById('consultToggleBtn');
+            
+            if (consulting) {
+                indicator.textContent = '接诊中';
+                indicator.className = 'status-indicator status-online';
+                toggleBtn.innerHTML = '<i class="fas fa-stop"></i> 结束接诊';
+                toggleBtn.className = 'btn-consult-toggle btn-consult-end';
+                toggleBtn.onclick = toggleConsultation;
+                
+                document.getElementById('consultListSection').style.display = 'block';
+                document.getElementById('statusFilterBoxes').style.display = 'block';
+                
+                // 根据咨询方式显示对应容器
+                document.getElementById('chatContainer').style.display = currentConsultType === 'graphic' ? 'flex' : 'none';
+                document.getElementById('phoneContainer').style.display = currentConsultType === 'phone' ? 'flex' : 'none';
+                document.getElementById('videoContainer').style.display = currentConsultType === 'video' ? 'flex' : 'none';
+            } else {
+                indicator.textContent = '离线';
+                indicator.className = 'status-indicator status-offline';
+                toggleBtn.innerHTML = '<i class="fas fa-play"></i> 开始接诊';
+                toggleBtn.className = 'btn-consult-toggle btn-consult-start';
+                toggleBtn.onclick = showStartConsultModal;
+                
+                document.getElementById('consultListSection').style.display = 'none';
+                document.getElementById('statusFilterBoxes').style.display = 'none';
+                document.getElementById('chatContainer').style.display = 'none';
+                document.getElementById('phoneContainer').style.display = 'none';
+                document.getElementById('videoContainer').style.display = 'none';
+                
+                // 清理资源
+                if (videoStream) {
+                    videoStream.getTracks().forEach(track => track.stop());
+                    videoStream = null;
+                }
+                isPhoneCalling = false;
+                currentActiveCall = null;
+            }
+        }
+
+        function toggleConsultation() {
+            const pendingCount = allPatients.filter(p => p.status === 'pending').length;
+            const inProgressCount = allPatients.filter(p => p.status === 'in-progress').length;
+            
+            if (pendingCount > 0 || inProgressCount > 0) {
+                alert('请先处理完所有待处理和进行中的咨询后再结束接诊');
+                return;
+            }
+            
+            isConsulting = false;
+            updateConsultationUI(false);
+            updateStatusCounts();
+        }
+
+        function updateStatusCounts() {
+            const pendingCount = allPatients.filter(p => p.status === 'pending').length;
+            const inProgressCount = allPatients.filter(p => p.status === 'in-progress').length;
+            const completedCount = allPatients.filter(p => p.status === 'completed').length;
+            const totalCount = pendingCount + inProgressCount + completedCount;
+            
+            document.querySelector('.item-box.pending .num').textContent = pendingCount;
+            document.querySelector('.item-box.in-progress .num').textContent = inProgressCount;
+            document.querySelector('.item-box.completed .num').textContent = completedCount;
+            document.querySelector('.item-box.vip .num').textContent = totalCount;
+        }
+
+        function filterByStatus(status) {
+            currentStatusFilter = status;
+            document.querySelectorAll('.item-box').forEach(box => {
+                box.classList.toggle('active', box.dataset.status === status);
+            });
+            filteredPatients = status === 'vip' ? [...allPatients] : allPatients.filter(p => p.status === status);
+            renderMessageList();
+        }
+
+        function renderMessageList() {
+            const messageList = document.getElementById('messageList');
+            messageList.innerHTML = '';
+            
+            const displayPatients = filteredPatients === allPatients ? 
+                [...allPatients.slice(0, expectedConsultCount)] : 
+                filteredPatients;
+            
+            if (displayPatients.length === 0) {
+                const emptyDiv = document.createElement('div');
+                emptyDiv.className = 'empty-state';
+                emptyDiv.innerHTML = '<i class="fas fa-inbox"></i><p>暂无符合条件的咨询</p>';
+                messageList.appendChild(emptyDiv);
+                return;
+            }
+            
+            displayPatients.forEach(patient => {
+                const msgItem = document.createElement('div');
+                msgItem.className = `message-item ${selectedUserId === patient.id ? 'active' : ''}`;
+                msgItem.dataset.id = patient.id;
+                msgItem.onclick = () => selectPatient(patient.id);
+                
+                let badges = '';
+                if (patient.memberType === 'svip') badges += '<span class="svip-badge">SVIP</span>';
+                else if (patient.memberType === 'vip') badges += '<span class="vip-badge">VIP</span>';
+                
+                let countdownHtml = '';
+                if (endTimers[patient.id] && endTimers[patient.id].remaining > 0) {
+                    const mins = Math.floor(endTimers[patient.id].remaining / 60);
+                    const secs = endTimers[patient.id].remaining % 60;
+                    countdownHtml = `<span class="countdown-icon"><i class="fas fa-clock"></i> ${mins}:${secs.toString().padStart(2, '0')}</span>`;
+                }
+                
+                msgItem.innerHTML = `
+                    <div class="message-header">
+                        <span class="message-sender">${patient.name} ${badges}</span>
+                        <span class="message-time">${patient.lastTime}${countdownHtml}</span>
+                    </div>
+                    <div class="message-preview">${patient.status === 'pending' ? '等待接诊' : (patient.lastMsg || '暂无消息')}</div>
+                    <div class="message-meta">
+                        <span>${patient.status === 'pending' ? '待处理' : patient.status === 'in-progress' ? '进行中' : '已完成'}</span>
+                        ${patient.unread > 0 && patient.status !== 'pending' ? `<span class="unread-badge">${patient.unread}未读</span>` : ''}
+                    </div>
+                    <div class="message-actions">
+                        <button class="action-btn" onclick="toggleMarkAsUnread(event, ${patient.id})">标记为未读</button>
+                    </div>
+                `;
+                messageList.appendChild(msgItem);
+            });
+        }
+
+        function selectPatient(patientId) {
+            const patient = allPatients.find(p => p.id === patientId);
+            if (patient.unread > 0 && patient.status !== 'pending') patient.unread = 0;
+            
+            if (patient.status === 'pending') {
+                if (confirm(`是否确认接诊患者【${patient.name}】？`)) {
+                    // 检查电话/视频咨询是否已有活跃通话
+                    if ((currentConsultType === 'phone' || currentConsultType === 'video') && currentActiveCall) {
+                        alert('同一时间只能进行一位患者的电话或视频咨询');
+                        return;
+                    }
+                    
+                    patient.status = 'in-progress';
+                    patient.lastMsg = currentConsultType === 'graphic' ? "您好，我已接诊，请您描述您的问题，我会及时回复您的！" : 
+                                    currentConsultType === 'phone' ? "您好，电话咨询请求已发送，等待患者接受邀请" : 
+                                    "您好，视频咨询请求已发送，等待患者接受邀请";
+                    patient.lastTime = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    updateStatusCounts();
+                    filterByStatus('in-progress');
+                    
+                    // 电话和视频咨询需要用户同意
+                    if (currentConsultType === 'phone' || currentConsultType === 'video') {
+                        showCallRequestModal(patient, currentConsultType);
+                    } else {
+                        doSelectPatient(patientId);
+                    }
+                }
+                return;
+            }
+            doSelectPatient(patientId);
+        }
+
+        function showCallRequestModal(patient, callType) {
+            pendingCallRequest = { patient: patient, type: callType };
+            document.getElementById('callPatientName').textContent = patient.name;
+            document.getElementById('callTypeInfo').textContent = callType === 'phone' ? '电话咨询' : '视频咨询';
+            document.getElementById('callRequestModal').style.display = 'flex';
+        }
+
+        function acceptCall() {
+            if (!pendingCallRequest) return;
+            
+            const patient = pendingCallRequest.patient;
+            currentActiveCall = { patient: patient, type: pendingCallRequest.type };
+            
+            document.getElementById('callRequestModal').style.display = 'none';
+            doSelectPatient(patient.id);
+            
+            // 模拟用户接受后的消息
+            patient.lastMsg = currentConsultType === 'phone' ? 
+                "患者已接受电话咨询邀请，您可以开始通话了" : 
+                "患者已接受视频咨询邀请，您可以开始视频了";
+            patient.lastTime = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            renderMessageList();
+            
+            alert(`${patient.name}已接受${pendingCallRequest.type === 'phone' ? '电话' : '视频'}咨询邀请`);
+            pendingCallRequest = null;
+        }
+
+        function rejectCall() {
+            if (!pendingCallRequest) return;
+            
+            const patient = pendingCallRequest.patient;
+            patient.status = 'pending';
+            patient.lastMsg = "患者拒绝了咨询邀请";
+            patient.lastTime = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            document.getElementById('callRequestModal').style.display = 'none';
+            updateStatusCounts();
+            renderMessageList();
+            
+            alert(`${patient.name}拒绝了${pendingCallRequest.type === 'phone' ? '电话' : '视频'}咨询邀请`);
+            pendingCallRequest = null;
+        }
+
+        function doSelectPatient(patientId) {
+            selectedUserId = patientId;
+            const patient = allPatients.find(p => p.id === patientId);
+            
+            // 根据咨询类型更新对应容器
+            if (currentConsultType === 'graphic') {
+                document.getElementById('currentPatient').textContent = `${patient.name} - 图文咨询`;
+                const chatInput = document.getElementById('chatInput');
+                const endBtn = document.getElementById('endConsultBtn');
+                const endBtnText = document.getElementById('endBtnText');
+                
+                if (patient.status === 'completed') {
+                    chatInput.style.display = 'none';
+                    endBtn.style.display = 'none';
+                } else {
+                    chatInput.style.display = 'flex';
+                    if (patient.status === 'in-progress') {
+                        endBtn.style.display = 'inline-block';
+                        endBtn.disabled = false;
+                        if (endTimers[patient.id] && endTimers[patient.id].remaining > 0) {
+                            const mins = Math.floor(endTimers[patient.id].remaining / 60);
+                            const secs = endTimers[patient.id].remaining % 60;
+                            endBtnText.innerHTML = `结束倒计时：${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                        } else {
+                            endBtnText.textContent = '申请结束本次问诊';
+                        }
+                    } else {
+                        endBtn.style.display = 'none';
+                    }
+                }
+                
+                const chatMessages = document.getElementById('chatMessages');
+                chatMessages.innerHTML = '';
+                if (patient.lastMsg) {
+                    const bubble = document.createElement('div');
+                    bubble.className = patient.status === 'in-progress' && patient.lastMsg.includes('您好，我已接诊') ? 
+                        'message-bubble message-doctor' : 'message-bubble message-patient';
+                    bubble.innerHTML = `
+                        <div>${patient.lastMsg}</div>
+                        <div class="message-time">${patient.lastTime}</div>
+                    `;
+                    chatMessages.appendChild(bubble);
+                } else {
+                    const emptyState = document.createElement('div');
+                    emptyState.className = 'empty-state';
+                    emptyState.innerHTML = '<i class="fas fa-comment-slash"></i><p>该患者暂无消息</p>';
+                    chatMessages.appendChild(emptyState);
+                }
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            } 
+            else if (currentConsultType === 'phone') {
+                document.getElementById('phoneCurrentPatient').textContent = `${patient.name} - 电话咨询`;
+                document.getElementById('phoneStatusTag').textContent = patient.status === 'in-progress' && currentActiveCall?.patient.id === patient.id ? '通话中' : '等待接受';
+                document.getElementById('phoneStatusTag').className = patient.status === 'in-progress' && currentActiveCall?.patient.id === patient.id ? 'status-tag' : 'status-tag offline';
+                
+                const phoneInput = document.getElementById('phoneInput');
+                const phoneControls = document.getElementById('phoneControls');
+                const endPhoneBtn = document.getElementById('endPhoneConsultBtn');
+                
+                if (patient.status === 'completed') {
+                    phoneInput.style.display = 'none';
+                    phoneControls.style.display = 'none';
+                    endPhoneBtn.style.display = 'none';
+                } else {
+                    phoneInput.style.display = 'flex';
+                    phoneControls.style.display = 'flex';
+                    if (patient.status === 'in-progress' && currentActiveCall?.patient.id === patient.id) {
+                        endPhoneBtn.style.display = 'inline-block';
+                        document.querySelector('.phone-call').style.display = 'none';
+                        document.querySelector('.phone-hangup').style.display = 'flex';
+                    } else {
+                        endPhoneBtn.style.display = 'none';
+                        document.querySelector('.phone-call').style.display = 'flex';
+                        document.querySelector('.phone-hangup').style.display = 'none';
+                    }
+                }
+                
+                const phoneMessages = document.getElementById('phoneMessages');
+                phoneMessages.innerHTML = '';
+                if (patient.lastMsg) {
+                    const bubble = document.createElement('div');
+                    bubble.className = 'message-bubble message-doctor';
+                    bubble.innerHTML = `
+                        <div>${patient.lastMsg}</div>
+                        <div class="message-time">${patient.lastTime}</div>
+                    `;
+                    phoneMessages.appendChild(bubble);
+                } else {
+                    const emptyState = document.createElement('div');
+                    emptyState.className = 'empty-state';
+                    emptyState.innerHTML = '<i class="fas fa-phone"></i><p>该患者暂无通话记录</p>';
+                    phoneMessages.appendChild(emptyState);
+                }
+            } 
+            else if (currentConsultType === 'video') {
+                document.getElementById('videoCurrentPatient').textContent = `${patient.name} - 视频咨询`;
+                document.getElementById('videoStatusTag').textContent = patient.status === 'in-progress' && currentActiveCall?.patient.id === patient.id ? '视频中' : '等待接受';
+                document.getElementById('videoStatusTag').className = patient.status === 'in-progress' && currentActiveCall?.patient.id === patient.id ? 'status-tag' : 'status-tag offline';
+                
+                const videoInput = document.getElementById('videoInput');
+                const videoContainerInner = document.getElementById('videoContainerInner');
+                const startVideoBtn = document.getElementById('startVideoBtn');
+                const endVideoBtn = document.getElementById('endVideoBtn');
+                
+                if (patient.status === 'completed') {
+                    videoInput.style.display = 'none';
+                    videoContainerInner.style.display = 'none';
+                } else {
+                    videoInput.style.display = 'flex';
+                    if (patient.status === 'in-progress' && currentActiveCall?.patient.id === patient.id) {
+                        videoContainerInner.style.display = 'flex';
+                        startVideoBtn.style.display = 'none';
+                        endVideoBtn.style.display = 'inline-block';
+                    } else {
+                        videoContainerInner.style.display = 'none';
+                        startVideoBtn.style.display = 'inline-block';
+                        endVideoBtn.style.display = 'none';
+                    }
+                }
+            }
+            
+            renderMessageList();
+        }
+
+        function requestEndConsult() {
+            if (!selectedUserId) return;
+            const patient = allPatients.find(p => p.id === selectedUserId);
+            const endBtn = document.getElementById('endConsultBtn');
+            const endBtnText = document.getElementById('endBtnText');
+            
+            if (confirm(`确定要申请结束与【${patient.name}】的图文问诊吗？`)) {
+                const chatMessages = document.getElementById('chatMessages');
+                const doctorBubble = document.createElement('div');
+                doctorBubble.className = 'message-bubble message-doctor';
+                doctorBubble.innerHTML = `
+                    <div>我已发起结束确认，若您未响应，5分钟后自动结束本次咨询</div>
+                    <div class="message-time">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                `;
+                chatMessages.appendChild(doctorBubble);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                startEndCountdown(patient.id, 300);
+                endBtn.disabled = true;
+                endBtnText.innerHTML = `结束倒计时：<span class="countdown-timer" id="countdown_${patient.id}">05:00</span>`;
+                updateCountdownDisplay(patient.id);
+            }
+        }
+
+        function startEndCountdown(patientId, seconds) {
+            if (endTimers[patientId]) clearInterval(endTimers[patientId].timer);
+            
+            endTimers[patientId] = {
+                remaining: seconds,
+                timer: setInterval(() => {
+                    endTimers[patientId].remaining--;
+                    if (endTimers[patientId].remaining <= 0) {
+                        clearInterval(endTimers[patientId].timer);
+                        endConsult(patientId);
+                    } else {
+                        updateCountdownDisplay(patientId);
+                        renderMessageList();
+                    }
+                }, 1000)
+            };
+        }
+
+        function updateCountdownDisplay(patientId) {
+            if (!endTimers[patientId] || endTimers[patientId].remaining <= 0) return;
+            const mins = Math.floor(endTimers[patientId].remaining / 60);
+            const secs = endTimers[patientId].remaining % 60;
+            const countdownEl = document.getElementById(`countdown_${patientId}`);
+            if (countdownEl) countdownEl.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function endConsult(patientId) {
+            const patient = allPatients.find(p => p.id === patientId);
+            if (patient) {
+                patient.status = 'completed';
+                delete endTimers[patientId];
+                updateStatusCounts();
+                filterByStatus(currentStatusFilter);
+                
+                const endBtn = document.getElementById('endConsultBtn');
+                if (endBtn) {
+                    endBtn.style.display = 'none';
+                    endBtn.disabled = false;
+                }
+                alert(`与【${patient.name}】的图文咨询已结束，转入"今日已完成"`);
+            }
+        }
+
+        function toggleMarkAsUnread(event, patientId) {
+            event.stopPropagation();
+            const patient = allPatients.find(p => p.id === patientId);
+            if (patient.status === 'pending') {
+                alert('待处理患者无法标记为未读');
+                return;
+            }
+            patient.unread = 1;
+            renderMessageList();
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const text = input.value.trim();
+            if (text && selectedUserId) {
+                const bubble = document.createElement('div');
+                bubble.className = 'message-bubble message-doctor';
+                bubble.innerHTML = `
+                    <div>${text}</div>
+                    <div class="message-time">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                `;
+                document.getElementById('chatMessages').appendChild(bubble);
+                input.value = '';
+                document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+            }
+        }
+
+        function sendMessageOnEnter(e) { if (e.key === 'Enter') sendMessage(); }
+
+        function filterConsultations() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const filterHour = document.getElementById('filterHour').value;
+            const filterMinute = document.getElementById('filterMinute').value;
+            
+            filteredPatients = allPatients.filter(p => {
+                const nameMatch = p.name.toLowerCase().includes(searchTerm);
+                let timeMatch = true;
+                if (filterHour && filterMinute) {
+                    const timeRegex = new RegExp(`^${filterHour}:${filterMinute}`);
+                    timeMatch = p.lastTime.match(timeRegex) || (p.lastTime === '今天' && filterHour >= '09' && filterHour <= '18');
+                }
+                return nameMatch && timeMatch;
+            });
+            
+            if (currentStatusFilter !== 'vip') {
+                filteredPatients = filteredPatients.filter(p => p.status === currentStatusFilter);
+            }
+            renderMessageList();
+        }
+
+        function refreshConsultations() {
+            filteredPatients = [...allPatients];
+            document.getElementById('searchInput').value = '';
+            document.getElementById('filterHour').value = '';
+            document.getElementById('filterMinute').value = '';
+            renderMessageList();
+            const successMsgEl = document.getElementById('successMsg');
+            successMsgEl.textContent = '咨询列表已刷新';
+            document.getElementById('successModal').style.display = 'flex';
+        }
+
+        function closeErrorModal() {
+            document.getElementById('errorModal').style.display = 'none';
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('successModal').style.display = 'none';
+        }
+
+        // 电话咨询相关函数
+        function startPhoneCall() {
+            if (!currentActiveCall || currentActiveCall.type !== 'phone') {
+                alert('请先选择患者并等待其接受邀请');
+                return;
+            }
+            
+            isPhoneCalling = true;
+            document.querySelector('.phone-call').style.display = 'none';
+            document.querySelector('.phone-hangup').style.display = 'flex';
+            document.getElementById('phoneStatusTag').textContent = '通话中';
+            document.getElementById('phoneStatusTag').className = 'status-tag';
+            alert('电话通话已开始');
+        }
+
+        function hangupPhoneCall() {
+            isPhoneCalling = false;
+            document.querySelector('.phone-call').style.display = 'flex';
+            document.querySelector('.phone-hangup').style.display = 'none';
+            document.getElementById('phoneStatusTag').textContent = '通话结束';
+            document.getElementById('phoneStatusTag').className = 'status-tag offline';
+            alert('电话通话已挂断');
+            
+            // 结束通话后重置状态
+            if (currentActiveCall) {
+                currentActiveCall.patient.status = 'completed';
+                currentActiveCall = null;
+                updateStatusCounts();
+                renderMessageList();
+            }
+        }
+
+        function togglePhoneMute() {
+            isPhoneMuted = !isPhoneMuted;
+            const muteBtn = document.querySelector('.phone-mute');
+            muteBtn.innerHTML = isPhoneMuted ? '<i class="fas fa-microphone-slash"></i>' : '<i class="fas fa-microphone"></i>';
+            alert(isPhoneMuted ? '麦克风已静音' : '麦克风已取消静音');
+        }
+
+        function savePhoneNote() {
+            const note = document.getElementById('phoneNoteInput').value.trim();
+            if (note && selectedUserId) {
+                alert(`电话备注已保存：${note}`);
+                document.getElementById('phoneNoteInput').value = '';
+            }
+        }
+
+        function endPhoneConsult() {
+            if (!selectedUserId) return;
+            const patient = allPatients.find(p => p.id === selectedUserId);
+            if (confirm(`确定要结束与【${patient.name}】的电话咨询吗？`)) {
+                patient.status = 'completed';
+                updateStatusCounts();
+                filterByStatus(currentStatusFilter);
+                hangupPhoneCall();
+                alert(`与【${patient.name}】的电话咨询已结束，转入"今日已完成"`);
+            }
+        }
+
+        // 视频咨询相关函数
+        function requestVideoPermission() {
+            navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+                .then(stream => {
+                    videoStream = stream;
+                    document.getElementById('permissionStatus').innerHTML = '<span style="color:#2db92d">权限获取成功</span>';
+                    document.getElementById('videoPermission').style.display = 'none';
+                    document.getElementById('videoContainerInner').style.display = 'flex';
+                    
+                    const localVideo = document.getElementById('localVideo');
+                    localVideo.srcObject = stream;
+                })
+                .catch(err => {
+                    document.getElementById('permissionStatus').innerHTML = `<span style="color:#ff4d4f">权限获取失败：${err.message}</span>`;
+                });
+        }
+
+        function startVideoCall() {
+            if (!currentActiveCall || currentActiveCall.type !== 'video') {
+                alert('请先选择患者并等待其接受邀请');
+                return;
+            }
+            
+            if (!videoStream) {
+                alert('请先获取摄像头权限');
+                return;
+            }
+            document.getElementById('startVideoBtn').style.display = 'none';
+            document.getElementById('endVideoBtn').style.display = 'inline-block';
+            document.getElementById('videoStatusTag').textContent = '视频中';
+            alert('视频通话已开始');
+        }
+
+        function endVideoCall() {
+            document.getElementById('startVideoBtn').style.display = 'inline-block';
+            document.getElementById('endVideoBtn').style.display = 'none';
+            document.getElementById('videoStatusTag').textContent = '视频结束';
+            document.getElementById('videoStatusTag').className = 'status-tag offline';
+            alert('视频通话已结束');
+            
+            // 结束通话后重置状态
+            if (currentActiveCall) {
+                currentActiveCall.patient.status = 'completed';
+                currentActiveCall = null;
+                updateStatusCounts();
+                renderMessageList();
+            }
+        }
+
+        function saveVideoNote() {
+            const note = document.getElementById('videoNoteInput').value.trim();
+            if (note && selectedUserId) {
+                alert(`视频备注已保存：${note}`);
+                document.getElementById('videoNoteInput').value = '';
+            }
+        }
+    </script>
+</body>
+</html>

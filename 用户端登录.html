@@ -1,0 +1,74 @@
+<!DOCTYPE html>  
+<html lang="zh-CN">  
+<head>  
+  <meta charset="UTF-8">  
+  <title>用户端登录 - 元生智护系统</title>  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">  
+  <style>  
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }  
+    body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }  
+    .login-box { background: rgba(255,255,255,0.95); padding: 40px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); width: 100%; max-width: 450px; position: relative; backdrop-filter: blur(10px); }  
+    .back-btn { position: absolute; top: 20px; left: 20px; color: #667eea; font-size: 20px; text-decoration: none; transition: color 0.3s; }  
+    .back-btn:hover { color: #764ba2; }  
+    h2 { text-align: center; color: #333; margin-bottom: 30px; font-size: 28px; font-weight: 600; }  
+    .input-group { position: relative; margin-bottom: 25px; }  
+    .input-group i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #999; font-size: 18px; }  
+    .input-group input { width: 100%; padding: 12px 20px 12px 45px; border: 2px solid #eee; border-radius: 10px; font-size: 16px; transition: border-color 0.3s; }  
+    .input-group input:focus { outline: none; border-color: #667eea; }  
+    .btn-login { width: 100%; padding: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: 500; cursor: pointer; transition: all 0.3s; }  
+    .btn-login:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102,126,234,0.4); }  
+    .switch-link { text-align: center; margin-top: 20px; color: #666; font-size: 16px; }  
+    .switch-link a { color: #667eea; text-decoration: none; font-weight: 500; transition: color 0.3s; }  
+    .switch-link a:hover { color: #764ba2; text-decoration: underline; }  
+  </style>  
+</head>  
+<body>  
+  <div class="login-box">  
+    <a class="back-btn" href="index.html"><i class="fas fa-arrow-left"></i></a>  
+    <h2>用户端登录</h2>  
+    <div class="input-group">  
+      <i class="fas fa-user-friends"></i>  
+      <input type="text" id="username" placeholder="请输入用户账号">  
+    </div>  
+    <div class="input-group">  
+      <i class="fas fa-lock"></i>  
+      <input type="password" id="password" placeholder="请输入密码">  
+    </div>  
+    <button class="btn-login" onclick="doLogin()">立即登录</button>  
+    <div class="switch-link">  
+      还没有账号？<a href="用户端注册.html?role=elderly" onclick="goRegister()">去注册</a>  
+    </div>  
+  </div>  
+
+  <script>  
+    const params = new URLSearchParams(window.location.search);  
+    const role = params.get('role') || 'elderly';  
+
+    function doLogin() {  
+      const username = document.getElementById('username').value.trim();  
+      const password = document.getElementById('password').value.trim();  
+      if (!username || !password) { alert('请输入完整信息'); return; }  
+
+      // 修改点：将地址改为 /api/login，并适配JSON响应
+      fetch('/api/login', {  
+        method: 'POST',  
+        headers: {'Content-Type': 'application/json'},  
+        body: JSON.stringify({ username, password, role })  
+      })  
+      .then(res => res.json())  // 修改点：解析JSON响应
+      .then(data => {
+        if (data.success) {
+          window.location.href='用户端首页.html';
+        } else {
+          alert(data.message || '账号或密码错误');
+        }
+      })  
+      .catch(err => alert('网络错误：' + err));  
+    }  
+
+    function goRegister() {  
+      window.location.href = `用户端注册.html?role=${role}`;  
+    }  
+  </script>  
+</body>  
+</html>

@@ -1,0 +1,41 @@
+<!-- 元生智护系统/index.html -->  
+<!DOCTYPE html>  
+<html lang="zh-CN">  
+<head>  
+  <meta charset="UTF-8">  
+  <title>元生智护系统 - 登录选择</title>  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">  
+  <style>  
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }  
+    body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }  
+    .container { background: rgba(255,255,255,0.95); padding: 50px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); text-align: center; max-width: 500px; width: 100%; }  
+    h1 { color: #333; margin-bottom: 40px; font-size: 32px; font-weight: 700; }  
+    .role-card { background: white; border-radius: 15px; padding: 30px; margin: 20px 0; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: transform 0.3s, box-shadow 0.3s; cursor: pointer; }  
+    .role-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(102,126,234,0.3); }  
+    .role-card i { font-size: 48px; color: #667eea; margin-bottom: 20px; }  
+    .role-card h3 { color: #333; margin-bottom: 10px; font-size: 22px; }  
+    .role-card p { color: #666; font-size: 16px; }  
+    .btn-role { display: inline-block; padding: 12px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 10px; text-decoration: none; font-size: 18px; font-weight: 500; margin-top: 10px; transition: all 0.3s; }  
+    .btn-role:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102,126,234,0.4); }  
+  </style>  
+</head>  
+<body>  
+  <div class="container">  
+    <h1>元生智护系统</h1>  
+    <!-- 用户端（老人/家属）入口 -->  
+    <div class="role-card" onclick="window.location.href='用户端登录.html?role=elderly'">  
+      <i class="fas fa-user-friends"></i>  
+      <h3>老人及家属端</h3>  
+      <p>为老人及家属提供健康管理服务</p>  
+      <a class="btn-role">进入登录</a>  
+    </div>  
+    <!-- 医护端入口 -->  
+    <div class="role-card" onclick="window.location.href='医护端登录.html?role=medical'">  
+      <i class="fas fa-user-md"></i>  
+      <h3>医护人员端</h3>  
+      <p>为医护人员提供患者管理工具</p>  
+      <a class="btn-role">进入登录</a>  
+    </div>  
+  </div>  
+</body>  
+</html>
