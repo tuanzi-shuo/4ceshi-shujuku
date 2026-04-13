@@ -2,12 +2,12 @@
   "version": 2,
   "builds": [
     {
-      "src": "app.py",
-      "use": "@vercel/python"
-    },
-    {
       "src": "*.html",
       "use": "@vercel/static"
+    },
+    {
+      "src": "app.py",
+      "use": "@vercel/python"
     }
   ],
   "routes": [
@@ -16,13 +16,12 @@
       "dest": "/app.py"
     },
     {
-      "src": "/(.*\\.(html|css|js|png|jpg|jpeg|gif|ico))",
+      "src": "/(.*\\.(html|css|js|png|jpg|jpeg|gif|ico|svg))",
       "dest": "/$1"
     },
     {
-      "src": "/",
+      "src": "/(.*)",
       "dest": "/index.html"
     }
   ]
-  // 注意：这里删除了整个 "env" 部分
 }
