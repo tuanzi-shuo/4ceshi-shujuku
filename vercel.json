@@ -23,8 +23,6 @@
       "src": "/",
       "dest": "/index.html"
     }
-  ],
-  "env": {
-    "SECRET_KEY": "@your_secret_key"
-  }
+  ]
+  // 注意：这里删除了整个 "env" 部分
 }
